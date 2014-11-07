@@ -1,31 +1,27 @@
 local brolaf_mt = {}
 brolaf = {}
-brolaf.all = {}
+brolaf.cur = nil
 
-function brolaf.new()
+function brolaf.new(options)
 	local self = setmetatable({}, {__index=brolaf_mt})
 
-	table.insert(brolaf.all, self)
+	local options = options or {}
+
+	if not options.noReplace then
+		brolaf.cur = self
+	end
 	return self
 end
 
 function brolaf.update( dt )
-	local i = 1
-	while i<=#brolaf.all do
-		local v = brolaf.all[i]
-		if v.purge then
-			table.remove(brolaf.all, i)
-		else
-			v:update(dt)
-			i = i+1
-		end
-
+	if brolaf.cur then
+		brolaf:update(dt)
 	end
 end
 
 function brolaf.draw(  )
-	for i,v in ipairs(brolaf.all) do
-		v:draw()
+	if brolaf.cur then
+		brolaf:draw()
 	end
 end
 
