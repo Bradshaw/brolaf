@@ -13,10 +13,15 @@ end
 
 
 function state:update(dt)
+	while #enemy.all<10 do
+		enemy.new({ x = math.random(0,800), y = math.random(0,600)})
+	end
+	enemy.update(dt)
 end
 
 
 function state:draw()
+	enemy.draw()
 end
 
 

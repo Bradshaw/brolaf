@@ -1,11 +1,11 @@
 function love.conf(t)
     __DEBUG__ = true
 
-    t.identity = "lazr"                   -- The name of the save directory (string)
+    t.identity = "brolaf"                   -- The name of the save directory (string)
     t.version = "0.9.0"                -- The LÖVE version this game was made for (string)
     t.console = __DEBUG__                  -- Attach a console (boolean, Windows only)
 
-    t.window.title = "lazr - preAlpha"        -- The window title (string)
+    t.window.title = "BROLAF"        -- The window title (string)
     t.window.icon = nil                -- Filepath to an image to use as the window's icon (string)
     t.window.width = 800               -- The window width (number)
     t.window.height = 600              -- The window height (number)
