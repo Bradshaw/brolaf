@@ -3,6 +3,7 @@ local state = {}
 function state:init()
 	room.new()
 	brolaf.new()
+	enemy.new()
 end
 
 
@@ -16,6 +17,7 @@ end
 
 function state:update(dt)
 	brolaf.update(dt)
+	enemy.update(dt)
 end
 
 
@@ -36,6 +38,8 @@ function state:draw()
 		screenCanvas:getWidth()/2,
 		screenCanvas:getHeight()/2
 	)
+	brolaf.draw()
+	enemy.draw()
 end
 
 
