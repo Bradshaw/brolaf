@@ -63,3 +63,12 @@ function useful.bline(x0, y0, x1, y1, plot)
 	end
 	return true
 end
+
+function table.find(tb,obj)
+	for i,o2 in ipairs(tb) do
+		if obj == o2 then
+			return i
+		end
+	end
+	return false
+end

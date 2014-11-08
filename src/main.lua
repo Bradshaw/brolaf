@@ -1,7 +1,8 @@
 require("useful")
+require("Stack")
 
 G = {
-	SCALE = __DEBUG__ and 1 or 2,
+	SCALE = __DEBUG__ and 1 or 3,
 	TILE_SIZE = 32,
 }
 
@@ -21,7 +22,7 @@ function love.load(arg)
  	screenCanvas:setFilter("nearest","nearest")
 
 
- 	local seed = 10 or os.time()
+ 	local seed = nil or os.time()
 	math.randomseed(seed)
 
 	

@@ -5,7 +5,14 @@ room.cur = nil
 roomWidth = 16
 roomHeight = 10
 
+nbEnemy = 4
+
 lRandom = love.math.random
+
+function room.resetVars()
+	enemy.all = {}
+	tile.all = {}
+end
 
 function room.new(options)
 	local self = setmetatable({}, {__index=room_mt})
@@ -20,23 +27,27 @@ function room.new(options)
 	end
 
 	self.WorldPosition = options.WorldPosition or {x = 0, y = 0}
-	local roomSeed = self.WorldPosition.x + 2500 * self.WorldPosition.y + 28460
+	local roomSeed = self.WorldPosition.x + 2500 * self.WorldPosition.y + 2848
 	roomSeed = (roomSeed~=0) and roomSeed or 1
 	print("room seed " .. roomSeed)
 	love.math.setRandomSeed(roomSeed)
 
-	self.Tiles = {}
-
-	self.LogicTiles = {}
-	
-	self:CreatTiles() -- init room
-
-	-- room generation and stuff
 	local isRoomValid = false
 	while not isRoomValid do
+		room.resetVars()
+
+		self.Tiles = {}
+
+		self.LogicTiles = {}
+
+		
+		self:CreatTiles() -- init room
+		-- room generation and stuff
+		
 		self:PlaceWalls(7)
 
-		self:addRandomEnemies(2)
+		self.Doors = {}
+		self:PlaceFourDoors()
 
 		isRoomValid = self:CheckRoomIntegrity()
 	end
@@ -89,7 +100,9 @@ end
 
 function room_mt:InstanciateTiles()
 	for _,tileInfos in ipairs(self.LogicTiles) do
-		if tileInfos.x==1 or tileInfos.x==16 or tileInfos.y==1 or tileInfos.y==10 then
+		if tileInfos.tileType == "Door" then
+			tileInfos.Texture ="Placeholder"
+		elseif tileInfos.x==1 or tileInfos.x==16 or tileInfos.y==1 or tileInfos.y==10 then
 			local conString = "Wall"
 			local edges = 0
 			if tileInfos.y==1 then
@@ -119,46 +132,6 @@ function room_mt:InstanciateTiles()
 	end
 end
 
-function room_mt:GetWallText(x,y)
-	local wUp = false
-	local wLeft = false
-	local wRight = false
-	local wDown = false
-	if self:GetTilesInfos(x,y - 1).tileType == "Wall" then
-		wUp = true
-	end
-	if self:GetTilesInfos(x - 1,y).tileType == "Wall" then
-		wLeft = true
-	end
-	if self:GetTilesInfos(x + 1,y).tileType == "Wall" then
-		wRight = true
-	end
-	if self:GetTilesInfos(x,y + 1).tileType == "Wall" then
-		wDown = true
-	end
-	
-	local texture = "WallUp"
-	if wDown and wRight then
-		texture = "WallUpLeft"
-	elseif wDown and wLeft then
-		texture = "WallUpRight"
-	elseif wUp and wRight then
-		texture = "WallDownLeft"
-	elseif wUp and wLeft then
-		texture = "WallDownRight"
-	elseif wDown then
-		texture = "WallUp"
-	elseif wUp then
-		texture = "WallDown"
-	elseif wLeft then
-		texture = "WallRight"
-	elseif wRight then
-		texture = "WallLeft"
-	end
-	return texture
-
-end
-
 function room_mt:PlaceWalls(nb)
 	for i = 1,nb do
 		self:PlaceRandomWall()
@@ -173,11 +146,11 @@ function room_mt:PlaceRandomWall()
 		{x =  0, y =  1},
 	}
 
-	rx = math.ceil(lRandom(roomWidth - 1)) 
-	ry = math.ceil(lRandom(roomHeight - 1)) 
+	rx = math.ceil(lRandom(roomWidth - 2))
+	ry = math.ceil(lRandom(roomHeight - 2))
 	local ti = self:GetTilesInfos(rx,ry)
-	--print(ti.tileType)
-	if ti and (ti ~= {}) and (ti.tileType ~= "Wall") then
+
+	if ti.tileType ~= "Wall" then
 		ti.tileType = "Wall"
 		self:SetTileInfos(ti)
 	end
@@ -201,14 +174,50 @@ function room_mt:PlaceRandomWall()
 	end
 end
 
+function displayTi(ti)
+	print("("..ti.x..","..ti.y..") " ..ti.tileType)
+end
+
+function room_mt:PlaceFourDoors()
+	self.Doors = {}
+	local rx = math.ceil(lRandom(roomWidth - 2))
+	local door = {x = rx, y = 1, tileType = "Door"}
+	self:SetTileInfos(door)
+	table.insert(self.Doors,door)
+	displayTi(door)
+
+	rx = math.ceil(lRandom(roomWidth - 2))
+	door = {x = rx, y = roomHeight, tileType = "Door"}
+	self:SetTileInfos(door)
+	table.insert(self.Doors,door)
+	displayTi(door)
+
+	local ry = math.ceil(lRandom(roomHeight - 2))
+	door = {x = 1, y = ry, tileType = "Door"}
+	self:SetTileInfos(door)
+	table.insert(self.Doors,door)
+	displayTi(door)
+	
+	ry = math.ceil(lRandom(roomHeight - 2))
+	door = {x = roomWidth, y = ry, tileType = "Door"}
+	self:SetTileInfos(door)
+	table.insert(self.Doors,door)
+	displayTi(door)
+end
+
 function room_mt:SetTileInfos(infos)
 	local index = (infos.x) + (infos.y-1) * roomWidth
 	self.LogicTiles[index] = infos
 end
 
 function room_mt:GetTilesInfos(px,py)
-	local index = (px) + (py-1) * roomWidth
-	return self.LogicTiles[index] or {x = px, y = py, "Wall" }
+	local index = px + (py-1) * roomWidth
+
+	local ret = self.LogicTiles[index] 
+	if not ret then 
+		print("outofbound ", px , "," , py)
+	end
+	return ret or {x = px, y = py,tileType = "Wall" }
 end
 
 function room_mt:IsTileWalkable(px,py)
@@ -242,13 +251,74 @@ function room_mt:isVisibleFromPixel(positionFrom, positionCheck)
 	return self:isVisibleFrom(xFrom, yFrom, xTo, yTo)
 end
 
+
 function room_mt:CheckRoomIntegrity()
-	for j = 1, roomHeight do
-		for i = 1, roomWidth do
-			--print(tostring(self:IsPathBlockedPixel({x=i*32,y=j *32})))
+
+	local floodList = self:FloodRoom()
+	for _,door in pairs(self.Doors)do
+		if not table.find(floodList,door) then
+			return false
 		end
 	end
+
+	for i= 1 , nbEnemy do
+		local ep = self:getTileFromSelection(floodList)
+		self:CreateEnemyAtPosition(ep)
+		table.remove(floodList,table.find(floodList,ep))
+	end
+
+	if lRandom(2) > 1 then
+		local ip = self:getTileFromSelection(floodList)
+		self:CreateItemAtPosition(ip)
+		table.remove(floodList,table.find(floodList,ip))
+	end
+
 	return true
+end
+
+room.AbortThreshold = 1000
+
+function room_mt:FloodRoom()
+	local loopAcc = 0
+	floodedTiles = {}
+	floodingTiles = Stack:Create()
+	local start = self.Doors[1]
+	floodingTiles:push(start)
+	print("start Flood (",start.x,",",start.y,")")
+	while floodingTiles:getn() > 0  and loopAcc < room.AbortThreshold do
+		loopAcc = loopAcc + 1
+		print(loopAcc)
+		local current = floodingTiles:pop(1)
+		table.insert(floodedTiles,current)
+
+		local ti
+		ti = self:GetTilesInfos(current.x + 1,current.y)
+		if (ti.tileType ~= "Wall") and not table.find(floodedTiles,ti) then
+			if not floodingTiles:find(ti) then
+				floodingTiles:push(ti)
+			end
+		end
+		ti = self:GetTilesInfos(current.x - 1,current.y)
+		if (ti.tileType ~= "Wall") and not table.find(floodedTiles,ti) then
+			if not floodingTiles:find(ti) then
+				floodingTiles:push(ti)
+			end
+		end
+		ti = self:GetTilesInfos(current.x    ,current.y + 1)
+		if (ti.tileType ~= "Wall") and not table.find(floodedTiles,ti) then
+			if not floodingTiles:find(ti) then
+				floodingTiles:push(ti)
+			end
+		end
+		ti = self:GetTilesInfos(current.x    ,current.y - 1)
+		if (ti.tileType ~= "Wall") and not table.find(floodedTiles,ti) then
+			if not floodingTiles:find(ti) then
+				floodingTiles:push(ti)
+			end
+		end
+	end
+	print("endflood with " , #floodedTiles , " tile")
+	return floodedTiles
 end
 
 function room_mt:getIntegerCoordinate(pixelX,pixelY)
@@ -258,35 +328,52 @@ function room_mt:getIntegerCoordinate(pixelX,pixelY)
 end
 
 function room_mt:getPixelPositions(px,py)
-	local x = px * G.TILE_SIZE + G.TILE_SIZE/2
-	local y = py * G.TILE_SIZE + G.TILE_SIZE/2
+	local x = px * G.TILE_SIZE - G.TILE_SIZE/2
+	local y = py * G.TILE_SIZE - G.TILE_SIZE/2
 	return x, y
 end
 
 function room_mt:getRandomPositionInRoom()
-	local rx = math.ceil(lRandom(roomWidth - 1)) 
-	local ry = math.ceil(lRandom(roomHeight - 1)) 
+	local rx = math.ceil(lRandom(roomWidth - 2)) 
+	local ry = math.ceil(lRandom(roomHeight - 2))
 	return rx,ry
 end
+
+function room_mt:getTileFromSelection(selection)
+	local found = false
+	local ri
+	while not found do
+		ri = math.ceil(lRandom(#selection))
+		found = selection[ri].tileType ~= "Door"
+	end
+	return selection[ri]
+end
+
 function room_mt:addRandomEnemies(nb)
 	for i = 1,nb do
-		self:addRandomPosition()
+		self:addEnemyAtRandomPosition()
 	end
 end
 
-function room_mt:addRandomPosition()
-	local isPositionFound = false
-	local x,y
-	while not isPositionFound do
-		x,y = self:getRandomPositionInRoom()
-		isPositionFound = self:IsTileWalkable(x,y)
-	end
-	x,y = self:getPixelPositions(x,y)
+function room_mt:CreateEnemyAtPosition(infos)
+	
+	local x,y = self:getPixelPositions(infos.x,infos.y)
 
 	local enemyType = enemyTypes[math.ceil(lRandom(#enemyTypes))]
 
 	enemy.new({
 		position = vec2.new(x,y),
-		typeEnemy = "skeleton"
+		typeEnemy = enemyType
+	})
+end
+
+function room_mt:CreateItemAtPosition(infos)
+	local x,y = self:getPixelPositions(infos.x,infos.y)
+
+	local itemType = itemTypes[math.ceil(lRandom(#itemTypes))]
+
+	item.new({
+		position = vec2.new(x,y),
+		typeitem = itemType
 	})
 end
