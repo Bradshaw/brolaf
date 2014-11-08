@@ -5,14 +5,16 @@ enemy.all = {}
 enemyTypes = {"skeleton","boar"}
 local enemiesDescriptor = {
 	skeleton = {
-		speed = 180,
+		hp = 2,
+		speed = 130,
 		damage = 1,
 		rangeDamage = 10,
 		rateDamage = 0.5,
 		timeBeforeHit = 20
 	},
 	boar = {
-		speed = 700,
+		hp = 4,
+		speed = 200,
 		damage = 2,
 		rangeDamage = 10,
 		rateDamage = 0.5,
@@ -27,6 +29,7 @@ function enemy.new(options)
 	self.position = options.position or vec2.new(500, 500)
 	self.typeEnemy = enemiesDescriptor[options.typeEnemy or "skeleton"]
 	self.currentTimerHit = 0
+	self.hp = self.typeEnemy.hp
 
 	if self.typeEnemy.timeBeforeCharge then
 		self.currentTimerBeforeCharge = 0
@@ -47,8 +50,27 @@ function enemy.update( dt )
 			v:update(dt)
 			i = i+1
 		end
-
 	end
+end
+
+function enemy.findClosest( posPlayer, sizeVisible, directionVisible )
+	local i = 1
+	local closest = -1
+	local indexClosest = 0
+	while i<=#enemy.all do
+		local v = enemy.all[i]
+		lengthTemp = v.position:sub(posPlayer):length()
+		if (closest < 0 or closest > lengthTemp) and
+		   useful.isClosest(v.position, posPlayer, sizeVisible) and directionVisible:sameSign(posPlayer:sub(v.position)) then
+				closest = lengthTemp
+				indexClosest = i
+		end
+		i = i+1
+	end
+	if indexClosest == 0 then
+		return nil
+	end
+	return enemy.all[indexClosest]
 end
 
 function enemy.draw(  )
@@ -66,21 +88,21 @@ function enemy_mt:update( dt )
 			end
 		else
 			newPosition = self.position:add(self.directionCharge:mul(self.typeEnemy.speed * dt))
-			--if map.cur and map.isPossible(newPosition) then
+			if room and room.cur:IsPathWalkablePixel(newPosition) then
 				self.position = newPosition
 				self:hit(dt)
-			--else
-			--self.currentTimerBeforeCharge = 0
-			--end
+			else
+				self.currentTimerBeforeCharge = 0
+			end
 		end
 	else
 		if not self:hit(dt) then
-			--directionMovement = map.nextPosition(self.position, brolaf.position())
+			--directionMovement = room.nextPosition(self.position, brolaf.position())
 			directionMovement = brolaf:position():sub(self.position):normalized()
 			newPosition = self.position:add(directionMovement:mul(self.typeEnemy.speed * dt))
-			--if map.cur and map.isPossible(newPosition) then
+			if room and room.cur:IsPathWalkablePixel(newPosition) then
 				self.position = newPosition
-			--end
+			end
 		end
 	end
 end
@@ -104,3 +126,10 @@ function enemy_mt:draw()
 	love.graphics.setColor(r, g, b, a)
 end
 
+function enemy_mt:takeDamage( damage )
+	self.hp = self.hp - damage
+	if self.hp <= 0 then
+		self.hp = 0
+		self.purge = true
+	end
+end

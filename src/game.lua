@@ -3,7 +3,6 @@ local state = {}
 function state:init()
 	room.new()
 	brolaf.new()
-	enemy.new()
 end
 
 

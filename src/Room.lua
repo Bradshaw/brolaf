@@ -1,6 +1,6 @@
 local room_mt = {}
 room = {}
-room.all = {}
+room.cur = nil
 
 roomWidth = 16
 roomHeight = 10
@@ -36,27 +36,21 @@ function room.new(options)
 	
 	self:InstanciateTiles() -- instanciate tiles
 
-	table.insert(room.all, self)
+	if not options.noReplace then
+		room.cur = self
+	end
 	return self
 end
 
 function room.update( dt )
-	local i = 1
-	while i<=#room.all do
-		local v = room.all[i]
-		if v.purge then
-			table.remove(room.all, i)
-		else
-			v:update(dt)
-			i = i+1
-		end
-
+	if room.cur then
+		room.cur:update(dt)
 	end
 end
 
 function room.draw(  )
-	for i,v in ipairs(room.all) do
-		v:draw()
+	if room.cur then
+		room.cur:draw(dt)
 	end
 end
 
@@ -220,23 +214,22 @@ function room_mt:IsPathBlocked(px,py)
 	return not self:IsTileWalkable(px,py)
 end
 
-function room_mt:IsPathWalkablePixel(px,py)
-	local x,y = self:getIntegerCoordinate(px,py)
+function room_mt:IsPathWalkablePixel(position)
+	local x,y = self:getIntegerCoordinate(position.x,position.y)
 	return self:IsTileWalkable(x,y)
 end
 
-function room_mt:IsPathBlockedPixel(px,py)
-	local x,y = self:getIntegerCoordinate(px,py)
+function room_mt:IsPathBlockedPixel(position)
+	local x,y = self:getIntegerCoordinate(position.x,position.y)
 	return self:IsPathBlocked(x,y)
 end
 
 function room_mt:CheckRoomIntegrity()
 	for j = 1, roomHeight do
 		for i = 1, roomWidth do
-			print(tostring(self:IsPathBlockedPixel(i*32,j *32)))
+			print(tostring(self:IsPathBlockedPixel({x=i*32,y=j *32})))
 		end
 	end
-
 	return true
 end
 

@@ -61,3 +61,7 @@ function vec2_mt:getRotation()
     local norm = self:normalized()
     return radianToDegree(math.atan2(norm.y, norm.x))
 end
+
+function vec2_mt:sameSign(other)
+	return ((self.x >= 0 and other.x >= 0) or (self.x <= 0 and other.x <= 0)) and ((self.y >= 0 and other.y >= 0) or (self.y <= 0 and other.y <= 0))
+end

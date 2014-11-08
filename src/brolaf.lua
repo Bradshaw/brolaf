@@ -2,15 +2,19 @@ local brolaf_mt = {}
 brolaf = {}
 brolaf.cur = nil
 
-local direction = { "left", "right", "down", "up" }
-
 function brolaf.new(options)
 	local self = setmetatable({}, {__index=brolaf_mt})
 
 	local options = options or {}
-	self.position = options.position or vec2.new(0, 0)
-	self.direction = "down"
+	self.position = options.position or vec2.new(40, 40)
+
+	self.speed = 0.4
 	self.hp = 5
+	self.damage = 1
+	self.rangeDamage = 10
+	self.rateDamage = 0.5
+	self.currentTimerHit = self.rateDamage
+	self.currentDirection = vec2.new(0, 0)
 
 	if not options.noReplace then
 		brolaf.cur = self
@@ -45,53 +49,56 @@ end
 
 function brolaf_mt:update( dt )
 	-- Movement
-	newPosition = self.position
+	currentDirection = vec2.new(0, 0)
 	-- Left
-	if (not self.joystick and love.keyboard.isDown("left", "q", "a"))
+	if ((not self.joystick and love.keyboard.isDown("left", "q", "a"))
 		or
-		(self.joystick and (self.joystick:isGamepadDown("dpleft") or useful.dead(self.joystick:getGamepadAxis("leftx")) < 0))
+		(self.joystick and (self.joystick:isGamepadDown("dpleft") or useful.dead(self.joystick:getGamepadAxis("leftx")) < 0)))
+		and room and room.cur:IsPathWalkablePixel(self.position:add(vec2.new(-self.speed, 0)))
 		then
-			newPosition.x = newPosition.x - 1
-			self.direction = "left"
+			currentDirection = currentDirection:add(vec2.new(-self.speed, 0))
 	end
 	-- Right
-	if (not self.joystick and love.keyboard.isDown("right", "d"))
+	if ((not self.joystick and love.keyboard.isDown("right", "d"))
 		or
-		(self.joystick and (self.joystick:isGamepadDown("dpright") or useful.dead(self.joystick:getGamepadAxis("leftx")) > 0))
+		(self.joystick and (self.joystick:isGamepadDown("dpright") or useful.dead(self.joystick:getGamepadAxis("leftx")) > 0)))
+		and room and room.cur:IsPathWalkablePixel(self.position:add(vec2.new(self.speed, 0)))
 		then
-			newPosition.x = newPosition.x + 1
-			self.direction = "right"
+			currentDirection = currentDirection:add(vec2.new(self.speed, 0))
 	end
-	--if map.cur and map.isPossible(newPosition) then
-		self.position = newPosition
-	--end
-	newPosition = self.position
 	-- Down
-	if (not self.joystick and love.keyboard.isDown("down", "s"))
+	if ((not self.joystick and love.keyboard.isDown("down", "s"))
 		or
-		(self.joystick and (self.joystick:isGamepadDown("dpdown") or useful.dead(self.joystick:getGamepadAxis("lefty")) > 0))
+		(self.joystick and (self.joystick:isGamepadDown("dpdown") or useful.dead(self.joystick:getGamepadAxis("lefty")) > 0)))
+		and room and room.cur:IsPathWalkablePixel(self.position:add(vec2.new(0, self.speed)))
 		then
-			newPosition.y = newPosition.y + 1
-			self.direction = "down"
+			currentDirection = currentDirection:add(vec2.new(0, self.speed))
 	end
 	-- Up
-	if (not self.joystick and love.keyboard.isDown("up", "z", "w"))
+	if ((not self.joystick and love.keyboard.isDown("up", "z", "w"))
 		or
-		(self.joystick and (self.joystick:isGamepadDown("dpup") or useful.dead(self.joystick:getGamepadAxis("lefty")) < 0))
+		(self.joystick and (self.joystick:isGamepadDown("dpup") or useful.dead(self.joystick:getGamepadAxis("lefty")) < 0)))
+		and room and room.cur:IsPathWalkablePixel(self.position:add(vec2.new(0, -self.speed)))
 		then
-			newPosition.y = newPosition.y - 1
-			self.direction = "up"
+			currentDirection = currentDirection:add(vec2.new(0, -self.speed))
 	end
-	--if map.cur and map.isPossible(newPosition) then
-		self.position = newPosition
-	--end
+	self.position = self.position:add(currentDirection)
+	if not currentDirection.x == 0 or not currentDirection.y == 0 then
+		self.currentDirection = currentDirection
+	end
 
 	-- Shoot
-	if (not self.joystick and (love.keyboard.isDown("return", "space") or love.mouse.isDown("l", "m", "r")))
+	self.currentTimerHit = self.currentTimerHit + dt
+	if ((not self.joystick and (love.keyboard.isDown("return", "space") or love.mouse.isDown("l", "m", "r")))
 		or
 		(self.joystick and (self.joystick:isGamepadDown("a", "b", "x", "y", "leftshoulder","rightshoulder") or
-		useful.dead(self.joystick:getGamepadAxis("triggerleft")) > 0 or useful.dead(self.joystick:getGamepadAxis("triggerright")) > 0)) then
-			print ("Hit")
+		useful.dead(self.joystick:getGamepadAxis("triggerleft")) > 0 or useful.dead(self.joystick:getGamepadAxis("triggerright")) > 0)))
+		and self.currentTimerHit >= self.rateDamage then
+			enemyClosest = enemy.findClosest(self.position, self.rangeDamage, self.currentDirection)
+			if enemyClosest then
+				enemyClosest:takeDamage(self.damage)
+				self.currentTimerHit = 0
+			end
 	end
 end
 
