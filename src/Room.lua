@@ -27,7 +27,7 @@ function room.new(options)
 	while not isRoomValid do
 		self:PlaceWalls(7)
 
-		self:addRandomPosition()
+		self:addRandomEnemies(6)
 
 		isRoomValid = self:CheckRoomIntegrity()
 	end
@@ -256,6 +256,11 @@ function room_mt:getRandomPositionInRoom()
 	local rx = math.ceil(lRandom(roomWidth - 1)) 
 	local ry = math.ceil(lRandom(roomHeight - 1)) 
 	return rx,ry
+end
+function room_mt:addRandomEnemies(nb)
+	for i = 1,nb do
+		self:addRandomPosition()
+	end
 end
 
 function room_mt:addRandomPosition()
