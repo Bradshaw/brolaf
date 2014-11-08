@@ -5,8 +5,7 @@ end
 
 
 function state:enter( pre )
-	brolaf.new({noReplace = false}) -- TO remove at the last
-	room.new({noReplace = false})
+	brolaf.new({noReplace = false})
 end
 
 
@@ -15,10 +14,6 @@ end
 
 
 function state:update(dt)
-	local rdt = dt *0.25
-	brolaf.update(rdt)
-	enemy.update(rdt)
-	item.update(rdt)
 end
 
 
@@ -29,10 +24,6 @@ function state:draw()
 
 	-- Do drawing between here...
 	love.graphics.rectangle("fill",0,0,640,360)
-	room.draw()
-	brolaf.draw()
-	enemy.draw()
-	item.draw()
 
 	-- And here
 
@@ -60,8 +51,11 @@ end
 
 function state:keypressed(key, isRepeat)
 	if key=='escape' then
-		menu = require("menu")
-		gstate.switch(menu)
+		love.event.push('quit')
+	end
+	if key=='return' then
+		game = require("game")
+		gstate.switch(game)
 	end
 end
 
@@ -109,6 +103,8 @@ end
 function state:gamepadpressed(joystick, btn)
 	if joystick:isGamepadDown("start") and brolaf.cur then
 		brolaf.cur.joystick = joystick
+		game = require("game")
+		gstate.switch(game)
 	end
 	if joystick:isGamepadDown("back") and brolaf.cur then
 		brolaf.cur.joystick = nil

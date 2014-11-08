@@ -2,22 +2,22 @@ local enemy_mt = {}
 enemy = {}
 enemy.all = {}
 
-enemyTypes = {"skeleton","boar"}
+enemyTypes = {"skeleton", "boar"}
 local enemiesDescriptor = {
 	skeleton = {
 		hp = 2,
 		speed = 130,
 		damage = 1,
-		rangeDamage = 10,
-		rateDamage = 0.5,
+		rangeDamage = 30,
+		rateDamage = 0.4,
 		timeBeforeHit = 20
 	},
 	boar = {
 		hp = 4,
 		speed = 200,
 		damage = 2,
-		rangeDamage = 10,
-		rateDamage = 0.5,
+		rangeDamage = 30,
+		rateDamage = 0.4,
 		timeBeforeCharge = 2
 	}
 }
@@ -26,13 +26,13 @@ function enemy.new(options)
 	local self = setmetatable({}, {__index=enemy_mt})
 	local options = options or {}
 
-	self.position = options.position or vec2.new(500, 500)
+	self.position = options.position or vec2.new(250, 250)
 	self.typeEnemy = enemiesDescriptor[options.typeEnemy or "skeleton"]
 	self.currentTimerHit = 0
 	self.hp = self.typeEnemy.hp
 
 	if self.typeEnemy.timeBeforeCharge then
-		self.currentTimerBeforeCharge = 0
+		self.currentTimerBeforeCharge = love.math.random(self.typeEnemy.timeBeforeCharge);
 		self.directionCharge = vec2.new(0, 0)
 	end
 
