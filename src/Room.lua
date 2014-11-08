@@ -12,6 +12,13 @@ function room.new(options)
 
 	local options = options or {}
 
+	-- Reset list of items and enemies
+	if not options.noReplace then
+		enemy.all = {}
+		item.all = {}
+		tile.all = {}
+	end
+
 	self.WorldPosition = options.WorldPosition or {x = 0, y = 0}
 	local roomSeed = self.WorldPosition.x + 2500 * self.WorldPosition.y + 28460
 	roomSeed = (roomSeed~=0) and roomSeed or 1
@@ -23,7 +30,9 @@ function room.new(options)
 	self.LogicTiles = {}
 	
 	self:CreatTiles() -- init room
--- room generation and stuff
+
+	-- room generation and stuff
+	local isRoomValid = false
 	while not isRoomValid do
 		self:PlaceWalls(7)
 
@@ -31,8 +40,6 @@ function room.new(options)
 
 		isRoomValid = self:CheckRoomIntegrity()
 	end
-
-
 	
 	self:InstanciateTiles() -- instanciate tiles
 
@@ -65,7 +72,6 @@ function room_mt:draw()
 end
 
 function room_mt:CreatTiles()
-	
 	for j = 1, roomHeight do
 		for i = 1, roomWidth do
 			local tt = "Floor"
@@ -107,7 +113,7 @@ function room_mt:InstanciateTiles()
 		elseif tileInfos.tileType == "Wall" then
 			tileInfos.Texture = "Rock"
 		else
-			tileInfos.Texture = "Ground1"	
+			tileInfos.Texture = "Ground1"
 		end
 		table.insert(self.Tiles, tile.new(tileInfos))
 	end
@@ -170,7 +176,7 @@ function room_mt:PlaceRandomWall()
 	rx = math.ceil(lRandom(roomWidth - 1)) 
 	ry = math.ceil(lRandom(roomHeight - 1)) 
 	local ti = self:GetTilesInfos(rx,ry)
-	print(ti.tileType)
+	--print(ti.tileType)
 	if ti and (ti ~= {}) and (ti.tileType ~= "Wall") then
 		ti.tileType = "Wall"
 		self:SetTileInfos(ti)
@@ -227,7 +233,7 @@ end
 function room_mt:CheckRoomIntegrity()
 	for j = 1, roomHeight do
 		for i = 1, roomWidth do
-			print(tostring(self:IsPathBlockedPixel({x=i*32,y=j *32})))
+			--print(tostring(self:IsPathBlockedPixel({x=i*32,y=j *32})))
 		end
 	end
 	return true

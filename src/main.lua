@@ -33,7 +33,8 @@ function love.load(arg)
 	require("tile")
 
 	gstate = require "gamestate"
-	game = require("game")
+	--menu = require("menu")
+	game = require("game") -- TO remove at the last
 	gstate.registerEvents()
 	gstate.switch(game)
 end
