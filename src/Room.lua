@@ -14,7 +14,7 @@ function room.new(options)
 
 	self.WorldPosition = options.WorldPosition or {x = 0, y = 0}
 	local roomSeed = self.WorldPosition.x + 2500 * self.WorldPosition.y + 28460
-
+	roomSeed = (roomSeed~=0) and roomSeed or 1
 	print("room seed " .. roomSeed)
 	love.math.setRandomSeed(roomSeed)
 
@@ -29,8 +29,11 @@ function room.new(options)
 -- room generation and stuff
 	while not isRoomValid do
 		self:PlaceWalls(7)
-		isRoomValid = true
+
+		isRoomValid = self:CheckRoomIntegrity()
 	end
+
+
 	
 	self:InstanciateTiles() -- instanciate tiles
 
@@ -185,4 +188,39 @@ end
 function room_mt:GetTilesInfos(px,py)
 	local index = (px) + (py-1) * roomWidth
 	return self.LogicTiles[index] or {x = px, y = py, "Wall" }
+end
+
+function room_mt:IsTileWalkable(px,py)
+	local ti = self:GetTilesInfos(px,py)
+	return tile.GPInfos[ti.tileType].Walkable
+end
+
+function room_mt:IsPathBlocked(px,py)
+	return not self:IsTileWalkable(px,py)
+end
+
+function room_mt:IsPathWalkablePixel(px,py)
+	local x,y = self:getIntegerCoordinate(px,py)
+	return self:IsTileWalkable(x,y)
+end
+
+function room_mt:IsPathBlockedPixel(px,py)
+	local x,y = self:getIntegerCoordinate(px,py)
+	return self:IsPathBlocked(x,y)
+end
+
+function room_mt:CheckRoomIntegrity()
+	for j = 1, roomHeight do
+		for i = 1, roomWidth do
+			print(tostring(self:IsPathBlockedPixel(i*32,j *32)))
+		end
+	end
+
+	return true
+end
+
+function room_mt:getIntegerCoordinate(pixelX,pixelY)
+	local x = math.ceil(pixelX / tile.Dimentions.x)
+	local y = math.ceil(pixelY / tile.Dimentions.y)
+	return x ,y
 end
