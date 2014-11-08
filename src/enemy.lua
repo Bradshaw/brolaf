@@ -61,7 +61,7 @@ function enemy.findClosest( posPlayer, sizeVisible, directionVisible )
 		local v = enemy.all[i]
 		lengthTemp = v.position:sub(posPlayer):length()
 		if (closest < 0 or closest > lengthTemp) and
-		   useful.isClosest(v.position, posPlayer, sizeVisible) and directionVisible:sameSign(v.position:sub(posPlayer)) then
+		   useful.isClosest(v.position, posPlayer, sizeVisible) and directionVisible:sameSign(posPlayer:sub(v.position)) then
 				closest = lengthTemp
 				indexClosest = i
 		end
