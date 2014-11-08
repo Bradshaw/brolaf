@@ -29,11 +29,13 @@ function love.load(arg)
 	require("vec2")
 	require("brolaf")
 	require("enemy")
+	require("item")
 	require("room")
 	require("tile")
 
 	gstate = require "gamestate"
-	game = require("game")
+	--menu = require("menu")
+	game = require("game") -- TO remove at the last
 	gstate.registerEvents()
 	gstate.switch(game)
 end

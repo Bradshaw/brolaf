@@ -78,7 +78,7 @@ end
 
 function tile_mt:draw()
 
-	local posx = (self.Position.x  -1 ) * self.Image:getWidth()
+	local posx = (self.Position.x - 1 ) * self.Image:getWidth()
 	local posy = (self.Position.y - 1 ) * self.Image:getHeight()
 
 	love.graphics.draw(self.Image, posx, posy)

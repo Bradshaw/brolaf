@@ -19,8 +19,15 @@ function room.new(options)
 
 	local options = options or {}
 
+	-- Reset list of items and enemies
+	if not options.noReplace then
+		enemy.all = {}
+		item.all = {}
+		tile.all = {}
+	end
+
 	self.WorldPosition = options.WorldPosition or {x = 0, y = 0}
-	local roomSeed = self.WorldPosition.x + 2500 * self.WorldPosition.y + 2848 + love.timer.getTime()
+	local roomSeed = self.WorldPosition.x + 2500 * self.WorldPosition.y + 2848
 	roomSeed = (roomSeed~=0) and roomSeed or 1
 	print("room seed " .. roomSeed)
 	love.math.setRandomSeed(roomSeed)
@@ -44,8 +51,6 @@ function room.new(options)
 
 		isRoomValid = self:CheckRoomIntegrity()
 	end
-
-
 	
 	self:InstanciateTiles() -- instanciate tiles
 
@@ -78,7 +83,6 @@ function room_mt:draw()
 end
 
 function room_mt:CreatTiles()
-	
 	for j = 1, roomHeight do
 		for i = 1, roomWidth do
 			local tt = "Floor"
@@ -122,7 +126,7 @@ function room_mt:InstanciateTiles()
 		elseif tileInfos.tileType == "Wall" then
 			tileInfos.Texture = "Rock"
 		else
-			tileInfos.Texture = "Ground1"	
+			tileInfos.Texture = "Ground1"
 		end
 		table.insert(self.Tiles, tile.new(tileInfos))
 	end
@@ -145,6 +149,7 @@ function room_mt:PlaceRandomWall()
 	rx = math.ceil(lRandom(roomWidth - 2))
 	ry = math.ceil(lRandom(roomHeight - 2))
 	local ti = self:GetTilesInfos(rx,ry)
+
 	if ti.tileType ~= "Wall" then
 		ti.tileType = "Wall"
 		self:SetTileInfos(ti)
@@ -246,8 +251,13 @@ function room_mt:CheckRoomIntegrity()
 	for i= 1 , nbEnemy do
 		local ep = self:getTileFromSelection(floodList)
 		self:CreateEnemyAtPosition(ep)
-		displayTi(ep)
 		table.remove(floodList,table.find(floodList,ep))
+	end
+
+	if lRandom(2) > 1 then
+		local ip = self:getTileFromSelection(floodList)
+		self:CreateItemAtPosition(ip)
+		table.remove(floodList,table.find(floodList,ip))
 	end
 
 	return true
@@ -341,5 +351,16 @@ function room_mt:CreateEnemyAtPosition(infos)
 	enemy.new({
 		position = vec2.new(x,y),
 		typeEnemy = enemyType
+	})
+end
+
+function room_mt:CreateItemAtPosition(infos)
+	local x,y = self:getPixelPositions(infos.x,infos.y)
+
+	local itemType = itemTypes[math.ceil(lRandom(#itemTypes))]
+
+	item.new({
+		position = vec2.new(x,y),
+		typeitem = itemType
 	})
 end

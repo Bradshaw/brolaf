@@ -9,12 +9,15 @@ function brolaf.new(options)
 	self.position = options.position or vec2.new(40, 40)
 
 	self.speed = 0.4
-	self.hp = 5
+	self.totalHp = 5
+	self.hp = self.totalHp
 	self.damage = 1
-	self.rangeDamage = 10
-	self.rateDamage = 0.5
+	self.rangeDamage = 30
+	self.rateDamage = 0.1
 	self.currentTimerHit = self.rateDamage
 	self.currentDirection = vec2.new(0, 0)
+	self.rangeTakeItem = 15
+	self.timeHyperKill = 0
 
 	if not options.noReplace then
 		brolaf.cur = self
@@ -44,6 +47,18 @@ end
 function brolaf.takeDamage( damage )
 	if brolaf.cur then
 		brolaf.cur:takeDamage(damage)
+	end
+end
+
+function brolaf.addHP( hp )
+	if brolaf.cur then
+		brolaf.cur:addHP(hp)
+	end
+end
+
+function brolaf.addTimeHyperKill( timeHyperKill )
+	if brolaf.cur then
+		brolaf.cur:addTimeHyperKill(timeHyperKill)
 	end
 end
 
@@ -89,6 +104,7 @@ function brolaf_mt:update( dt )
 
 	-- Shoot
 	self.currentTimerHit = self.currentTimerHit + dt
+	self.timeHyperKill = self.timeHyperKill - dt
 	if ((not self.joystick and (love.keyboard.isDown("return", "space") or love.mouse.isDown("l", "m", "r")))
 		or
 		(self.joystick and (self.joystick:isGamepadDown("a", "b", "x", "y", "leftshoulder","rightshoulder") or
@@ -96,9 +112,19 @@ function brolaf_mt:update( dt )
 		and self.currentTimerHit >= self.rateDamage then
 			enemyClosest = enemy.findClosest(self.position, self.rangeDamage, self.currentDirection)
 			if enemyClosest then
-				enemyClosest:takeDamage(self.damage)
+				if self.timeHyperKill > 0 then
+					enemyClosest:takeDamage(enemyClosest.hp)
+				else
+					enemyClosest:takeDamage(self.damage)
+				end
 				self.currentTimerHit = 0
 			end
+	end
+
+	-- Check items
+	itemClosest = item.findClosest(self.position, self.rangeTakeItem)
+	if itemClosest then
+		itemClosest:pickUp(self)
 	end
 end
 
@@ -111,7 +137,20 @@ function brolaf_mt:takeDamage( damage )
 	if self.hp <= 0 then
 		self.hp = 0
 		print ("Dead")
+		menu = require("menu")
+		gstate.switch(menu)
 	else
 		print ("HP ", self.hp)
 	end
+end
+
+function brolaf_mt:addHP( hp )
+	self.hp = self.hp + hp
+	if self.hp > self.totalHp then
+		self.hp = self.totalHp
+	end
+end
+
+function brolaf_mt:addTimeHyperKill( timeHyperKill )
+	self.timeHyperKill = timeHyperKill
 end
