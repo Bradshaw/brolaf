@@ -2,6 +2,20 @@ local tile_mt = {}
 tile = {}
 tile.all = {}
 
+tile.Textures =
+{
+	WallDown 		= fudge.current:getPiece("Wall_down1"),
+	WallDownLeft 	= fudge.current:getPiece("Wall_downleft"),
+	WallDownRight 	= fudge.current:getPiece("Wall_downright"),
+	WallLeft 		= fudge.current:getPiece("Wall_left1"),
+	WallRight 		= fudge.current:getPiece("Wall_right1"),
+	WallUp 			= fudge.current:getPiece("Wall_up1"),
+	WallUpLeft 		= fudge.current:getPiece("Wall_upleft"),
+	WallUpRight 	= fudge.current:getPiece("Wall_upright"),
+	PlaceHolderFloor= fudge.current:getPiece("PlaceHolderFloor"),
+}
+
+
 function tile.new(options)
 	local self = setmetatable({}, {__index=tile_mt}) 	
 
@@ -13,7 +27,7 @@ function tile.new(options)
 	self.Position.y = options.y or 0
 	
 	self.Texture = options.Texture or "WallUp"
-	self.Image = Textures[self.Texture]
+	self.Image = tile.Textures[self.Texture]
 	print(self.Texture)
 
  	table.insert(tile.all, self)
@@ -51,5 +65,5 @@ function tile_mt:draw()
 	local posx = (self.Position.x  -1 ) * self.Image:getWidth() * TILE_SCALE
 	local posy = (self.Position.y - 1 ) * self.Image:getHeight() * TILE_SCALE
 
-	love.graphics.draw(self.Image, posx, posy,nil, TILE_SCALE, TILE_SCALE)
+	love.graphics.draw(self.Image, posx, posy, nil, TILE_SCALE, TILE_SCALE)
 end
