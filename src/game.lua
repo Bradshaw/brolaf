@@ -20,8 +20,22 @@ end
 
 
 function state:draw()
+	screenCanvas:clear()
+	love.graphics.setCanvas(screenCanvas)
+	love.graphics.rectangle("fill",0,0,640,360)
 	room.draw()
 	brolaf.draw()
+	love.graphics.setCanvas()
+	love.graphics.draw(
+		screenCanvas,
+		love.graphics.getWidth()/2,
+		love.graphics.getHeight()/2,
+		0,
+		G.SCALE,
+		G.SCALE,
+		screenCanvas:getWidth()/2,
+		screenCanvas:getHeight()/2
+	)
 end
 
 

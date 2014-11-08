@@ -48,8 +48,6 @@ function tile.update( dt )
 	end
 end
 
-TILE_SCALE = 2
-
 function tile.draw(  )
 	for i,v in ipairs(tile.all) do
 		v:draw()
@@ -62,8 +60,8 @@ end
 
 function tile_mt:draw()
 
-	local posx = (self.Position.x  -1 ) * self.Image:getWidth() * TILE_SCALE
-	local posy = (self.Position.y - 1 ) * self.Image:getHeight() * TILE_SCALE
+	local posx = (self.Position.x  -1 ) * self.Image:getWidth()
+	local posy = (self.Position.y - 1 ) * self.Image:getHeight()
 
-	love.graphics.draw(self.Image, posx, posy, nil, TILE_SCALE, TILE_SCALE)
+	love.graphics.draw(self.Image, posx, posy)
 end
