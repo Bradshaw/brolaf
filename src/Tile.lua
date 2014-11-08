@@ -4,15 +4,21 @@ tile.all = {}
 
 tile.Textures =
 {
+	WallUp 			= fudge.current:getPiece("Wall_up1"),
 	WallDown 		= fudge.current:getPiece("Wall_down1"),
-	WallDownLeft 	= fudge.current:getPiece("Wall_downleft"),
-	WallDownRight 	= fudge.current:getPiece("Wall_downright"),
 	WallLeft 		= fudge.current:getPiece("Wall_left1"),
 	WallRight 		= fudge.current:getPiece("Wall_right1"),
-	WallUp 			= fudge.current:getPiece("Wall_up1"),
+	WallUpVar 			= fudge.current:getPiece("Wall_up3"),
+	WallDownVar 		= fudge.current:getPiece("Wall_down3"),
+	WallLeftVar 		= fudge.current:getPiece("Wall_left3"),
+	WallRightVar 		= fudge.current:getPiece("Wall_right3"),
+	WallDownLeft 	= fudge.current:getPiece("Wall_downleft"),
+	WallDownRight 	= fudge.current:getPiece("Wall_downright"),
 	WallUpLeft 		= fudge.current:getPiece("Wall_upleft"),
 	WallUpRight 	= fudge.current:getPiece("Wall_upright"),
+	Rock			= fudge.current:getPiece("Rock"),
 	Ground1			= fudge.current:getPiece("Ground1"),
+	Placeholder		= fudge.current:getPiece("PlaceHolderFloor"),
 }
 
 tile.GPInfos = {
