@@ -28,6 +28,7 @@ function love.load(arg)
 	require("vec2")
 	require("brolaf")
 	require("enemy")
+	require("item")
 	require("room")
 	require("tile")
 

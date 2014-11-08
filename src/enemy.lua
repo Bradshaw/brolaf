@@ -26,13 +26,13 @@ function enemy.new(options)
 	local self = setmetatable({}, {__index=enemy_mt})
 	local options = options or {}
 
-	self.position = options.position or vec2.new(500, 500)
+	self.position = options.position or vec2.new(250, 250)
 	self.typeEnemy = enemiesDescriptor[options.typeEnemy or "skeleton"]
 	self.currentTimerHit = 0
 	self.hp = self.typeEnemy.hp
 
 	if self.typeEnemy.timeBeforeCharge then
-		self.currentTimerBeforeCharge = 0
+		self.currentTimerBeforeCharge = love.math.random(self.typeEnemy.timeBeforeCharge);
 		self.directionCharge = vec2.new(0, 0)
 	end
 

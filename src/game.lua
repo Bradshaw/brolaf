@@ -18,6 +18,7 @@ function state:update(dt)
 	local rdt = dt *0.25
 	brolaf.update(rdt)
 	enemy.update(rdt)
+	item.update(rdt)
 end
 
 
@@ -31,6 +32,7 @@ function state:draw()
 	room.draw()
 	brolaf.draw()
 	enemy.draw()
+	item.draw()
 
 	-- And here
 
