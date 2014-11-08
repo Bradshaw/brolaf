@@ -23,8 +23,8 @@ function love.load(arg)
 	
 	require("brolaf")
 	require("enemy")
-	require("Room")
-	require("Tile")
+	require("room")
+	require("tile")
 
 	gstate = require "gamestate"
 	game = require("game")

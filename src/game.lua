@@ -1,7 +1,7 @@
 local state = {}
 
 function state:init()
-	Room.new()
+	room.new()
 	brolaf.new()
 end
 
@@ -20,7 +20,7 @@ end
 
 
 function state:draw()
-	Room.draw()
+	room.draw()
 	brolaf.draw()
 end
 
