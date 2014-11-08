@@ -16,8 +16,9 @@ end
 
 
 function state:update(dt)
-	brolaf.update(dt)
-	enemy.update(dt)
+	local rdt = dt *0.25
+	brolaf.update(rdt)
+	enemy.update(rdt)
 end
 
 

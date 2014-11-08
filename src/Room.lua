@@ -18,10 +18,7 @@ function room.new(options)
 	print("room seed " .. roomSeed)
 	love.math.setRandomSeed(roomSeed)
 
-
 	self.Tiles = {}
-	self.Enemies = {}
-	self.Items = {}
 
 	self.LogicTiles = {}
 	
@@ -29,6 +26,8 @@ function room.new(options)
 -- room generation and stuff
 	while not isRoomValid do
 		self:PlaceWalls(7)
+
+		self:addRandomPosition()
 
 		isRoomValid = self:CheckRoomIntegrity()
 	end
@@ -220,7 +219,36 @@ function room_mt:CheckRoomIntegrity()
 end
 
 function room_mt:getIntegerCoordinate(pixelX,pixelY)
-	local x = math.ceil(pixelX / tile.Dimentions.x)
-	local y = math.ceil(pixelY / tile.Dimentions.y)
+	local x = math.ceil(pixelX / G.TILE_SIZE)
+	local y = math.ceil(pixelY / G.TILE_SIZE)
 	return x ,y
+end
+
+function room_mt:getPixelPositions(px,py)
+	local x = px * G.TILE_SIZE + G.TILE_SIZE/2
+	local y = py * G.TILE_SIZE + G.TILE_SIZE/2
+	return x, y
+end
+
+function room_mt:getRandomPositionInRoom()
+	local rx = math.ceil(lRandom(roomWidth - 1)) 
+	local ry = math.ceil(lRandom(roomHeight - 1)) 
+	return rx,ry
+end
+
+function room_mt:addRandomPosition()
+	local isPositionFound = false
+	local x,y
+	while not isPositionFound do
+		x,y = self:getRandomPositionInRoom()
+		isPositionFound = self:IsTileWalkable(x,y)
+	end
+	x,y = self:getPixelPositions(x,y)
+
+	local enemyType = enemyTypes[math.ceil(lRandom(#enemyTypes))]
+
+	enemy.new({
+		position = vec2.new(x,y),
+		typeEnemy = enemyType
+	})
 end
