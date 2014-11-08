@@ -7,8 +7,6 @@ G = {
 
 function love.load(arg)
  	
-
-
  	fudge = require("fudge")
  	sprites = fudge.new("Assets",{
  		npot = true,
@@ -26,6 +24,8 @@ function love.load(arg)
  	local seed = 10 or os.time()
 	math.randomseed(seed)
 
+	
+	require("vec2")
 	require("brolaf")
 	require("enemy")
 	require("room")

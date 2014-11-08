@@ -8,8 +8,9 @@ function brolaf.new(options)
 	local self = setmetatable({}, {__index=brolaf_mt})
 
 	local options = options or {}
-	self.position = options.position or { x = 0, y = 0 }
+	self.position = options.position or vec2.new(0, 0)
 	self.direction = "down"
+	self.hp = 5
 
 	if not options.noReplace then
 		brolaf.cur = self
@@ -29,9 +30,22 @@ function brolaf.draw(  )
 	end
 end
 
+function brolaf.position(  )
+	if brolaf.cur then
+		return brolaf.cur.position
+	end
+	return vec2.new(0, 0)
+end
+
+function brolaf.takeDamage( damage )
+	if brolaf.cur then
+		brolaf.cur:takeDamage(damage)
+	end
+end
+
 function brolaf_mt:update( dt )
 	-- Movement
-	newPosition = { x = self.position.x, y = self.position.y }
+	newPosition = self.position
 	-- Left
 	if (not self.joystick and love.keyboard.isDown("left", "q", "a"))
 		or
@@ -48,6 +62,10 @@ function brolaf_mt:update( dt )
 			newPosition.x = newPosition.x + 1
 			self.direction = "right"
 	end
+	--if map.cur and map.isPossible(newPosition) then
+		self.position = newPosition
+	--end
+	newPosition = self.position
 	-- Down
 	if (not self.joystick and love.keyboard.isDown("down", "s"))
 		or
@@ -64,7 +82,7 @@ function brolaf_mt:update( dt )
 			newPosition.y = newPosition.y - 1
 			self.direction = "up"
 	end
-	--if map.cur and map.cur.isPossible(newPosition) then
+	--if map.cur and map.isPossible(newPosition) then
 		self.position = newPosition
 	--end
 
@@ -73,10 +91,20 @@ function brolaf_mt:update( dt )
 		or
 		(self.joystick and (self.joystick:isGamepadDown("a", "b", "x", "y", "leftshoulder","rightshoulder") or
 		useful.dead(self.joystick:getGamepadAxis("triggerleft")) > 0 or useful.dead(self.joystick:getGamepadAxis("triggerright")) > 0)) then
-			print ("Shoot")
+			print ("Hit")
 	end
 end
 
 function brolaf_mt:draw()
 	love.graphics.circle("fill", self.position.x, self.position.y, 4)
+end
+
+function brolaf_mt:takeDamage( damage )
+	self.hp = self.hp - damage
+	if self.hp <= 0 then
+		self.hp = 0
+		print ("Dead")
+	else
+		print ("HP ", self.hp)
+	end
 end

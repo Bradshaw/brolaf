@@ -27,3 +27,7 @@ function useful.dead(n, zone)
 	local zone = 0.3
 	return useful.tri(math.abs(n) > zone, n, 0)
 end
+
+function useful.isClosest(pos1, pos2, sizeVisible)
+	return pos2:sub(pos1):length() <= sizeVisible
+end
