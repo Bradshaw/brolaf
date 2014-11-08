@@ -12,7 +12,7 @@ tile.Textures =
 	WallUp 			= fudge.current:getPiece("Wall_up1"),
 	WallUpLeft 		= fudge.current:getPiece("Wall_upleft"),
 	WallUpRight 	= fudge.current:getPiece("Wall_upright"),
-	PlaceHolderFloor= fudge.current:getPiece("PlaceHolderFloor"),
+	Ground1			= fudge.current:getPiece("Ground1"),
 }
 
 

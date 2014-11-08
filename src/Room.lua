@@ -15,8 +15,11 @@ function room.new(options)
 	self.Tiles = {}
 	self.Enemies = {}
 	self.Items = {}
+
+	self.LogicTiles = {}
 	
 	self:CreatTiles()
+	self:InstanciateTiles()
 
 	table.insert(room.all, self)
 	return self
@@ -54,53 +57,73 @@ end
 
 function room_mt:CreatTiles()
 	
-	local px = 1
-	local py = 1
-	local tx = "WallUpLeft"
-	local t = tile.new({x = px,y = py,Texture = tx})
-	table.insert(self.Tiles,tile)
-	for i = 2, (roomWidth - 1) do
-		px = i
-		tx = "WallUp"
-		t = tile.new({x = px,y = py,Texture = tx})
-		table.insert(self.Tiles,t)
-	end
-	px = roomWidth
-	local tx = "WallUpRight"
-	t = tile.new({x = px,y = py,Texture = tx})
-	table.insert(self.Tiles, t)
-	
-	for j = 2,roomHeight - 1 do 
-		tx = "WallLeft"
-		t = tile.new({x = 1, y = j, Texture = tx})
-		table.insert(self.Tiles,t)
-		for i = 2,roomWidth do
-			tx = "PlaceHolderFloor"
-			t = tile.new({x = i, y = j, Texture = tx})
-			table.insert(self.Tiles,t)
+	for j = 1, roomHeight do
+		for i = 1, roomWidth do
+			local tt = "Floor"
+			if (j == 1) or (i == 1) or (j == roomHeight) or (i == roomWidth) then
+				tt ="Wall"
+			end
+			table.insert(self.LogicTiles,{
+					x = i,
+					y = j,
+					tileType = tt, 
+				})
 		end
-		tx = "WallRight"
-		t = tile.new({x = roomWidth, y = j, Texture = tx})
-		table.insert(self.Tiles,t)
 	end
-
-	py = roomHeight
-	tx = "WallDownLeft"
-	t = tile.new({x = 1,y = py,Texture = tx})
-	table.insert(self.Tiles,t)
-	for i = 2, (roomWidth - 1) do
-		px = i
-		tx = "WallDown"
-		t = tile.new({x = px,y = py,Texture = tx})
-		table.insert(self.Tiles,t)
-	end
-	px = roomWidth
-	local tx = "WallDownRight"
-	t = tile.new({x = px,y = py,Texture = tx})
-	table.insert(self.Tiles, t)
 end 
 
+function room_mt:InstanciateTiles()
+	for _,tileInfos in ipairs(self.LogicTiles) do
+		tileInfos.Texture = "Ground1"
+		if tileInfos.tileType == "Wall" then
+			tileInfos.Texture = self:GetWallText(tileInfos.x,tileInfos.y)
+		end
+		table.insert(self.Tiles, tile.new(tileInfos))
+	end
+end
+
+function room_mt:GetWallText(x,y)
+	local wUp = false
+	local wLeft = false
+	local wRight = false
+	local wDown = false
+	if self:GetTilesInfos(x,y - 1).tileType == "Wall" then
+		wUp = true
+	end
+	if self:GetTilesInfos(x - 1,y).tileType == "Wall" then
+		wLeft = true
+	end
+	if self:GetTilesInfos(x + 1,y).tileType == "Wall" then
+		wRight = true
+	end
+	if self:GetTilesInfos(x,y + 1).tileType == "Wall" then
+		wDown = true
+	end
+	
+	local texture = "WallUp"
+	if wDown and wRight then
+		texture = "WallUpLeft"
+	elseif wDown and wLeft then
+		texture = "WallUpRight"
+	elseif wUp and wRight then
+		texture = "WallDownLeft"
+	elseif wUp and wLeft then
+		texture = "WallDownRight"
+	elseif wDown then
+		texture = "WallUp"
+	elseif wUp then
+		texture = "WallDown"
+	elseif wLeft then
+		texture = "WallRight"
+	elseif wRight then
+		texture = "WallLeft"
+	end
+	return texture
+
+end
+
+
 function room_mt:GetTilesInfos(px,py)
-	local index = py + px * roomWidth
-	return self.Tiles[index] , self.Enemies[Index], self.Items[index]
+	local index = px + py * roomWidth
+	return self.LogicTiles[index] or {}
 end
