@@ -12,8 +12,8 @@ function brolaf.new(options)
 	self.totalHp = 5
 	self.hp = self.totalHp
 	self.damage = 1
-	self.rangeDamage = 10
-	self.rateDamage = 0.5
+	self.rangeDamage = 30
+	self.rateDamage = 0.1
 	self.currentTimerHit = self.rateDamage
 	self.currentDirection = vec2.new(0, 0)
 	self.rangeTakeItem = 15
@@ -137,6 +137,8 @@ function brolaf_mt:takeDamage( damage )
 	if self.hp <= 0 then
 		self.hp = 0
 		print ("Dead")
+		menu = require("menu")
+		gstate.switch(menu)
 	else
 		print ("HP ", self.hp)
 	end
