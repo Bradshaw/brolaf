@@ -2,10 +2,7 @@ local brolaf_mt = {}
 brolaf = {}
 brolaf.cur = nil
 
-direction = { "left", "right", "down", "up" }
-azerty = { "q", "d", "s", "z" }
-qwerty = { "a", "d", "s", "w" }
-mode = azerty
+local direction = { "left", "right", "down", "up" }
 
 function brolaf.new(options)
 	local self = setmetatable({}, {__index=brolaf_mt})
@@ -33,57 +30,51 @@ function brolaf.draw(  )
 end
 
 function brolaf_mt:update( dt )
-	--if map.cur then
-		-- Movement
-		newPosition = { x = self.position.x, y = self.position.y }
-		-- Left
-		if (not self.joystick and love.keyboard.isDown(mode[1]))
-		   or
-		   (self.joystick and (self.joystick:isGamepadDown("dpleft") or useful.dead(self.joystick:getGamepadAxis("leftx")) < 0))
-		   --and map.cur.isPossible(newPosition)
-		   then
-				newPosition.x = newPosition.x - 1
-				self.direction = "left"
-		end
-		-- Right
-		if (not self.joystick and love.keyboard.isDown(mode[2]))
-		   or
-		   (self.joystick and (self.joystick:isGamepadDown("dpright") or useful.dead(self.joystick:getGamepadAxis("leftx")) > 0))
-		   --and map.cur.isPossible(newPosition)
-		   then
-				newPosition.x = newPosition.x + 1
-				self.direction = "right"
-		end
-		-- Down
-		if (not self.joystick and love.keyboard.isDown(mode[3]))
-		   or
-		   (self.joystick and (self.joystick:isGamepadDown("dpdown") or useful.dead(self.joystick:getGamepadAxis("lefty")) > 0))
-		   --and map.cur.isPossible(newPosition)
-		   then
-				newPosition.y = newPosition.y + 1
-				self.direction = "down"
-		end
-		-- Up
-		if (not self.joystick and love.keyboard.isDown(mode[4]))
-		   or
-		   (self.joystick and (self.joystick:isGamepadDown("dpup") or useful.dead(self.joystick:getGamepadAxis("lefty")) < 0))
-		   --and map.cur.isPossible(newPosition)
-		   then
-				newPosition.y = newPosition.y - 1
-				self.direction = "up"
-		end
+	-- Movement
+	newPosition = { x = self.position.x, y = self.position.y }
+	-- Left
+	if (not self.joystick and love.keyboard.isDown("left", "q", "a"))
+		or
+		(self.joystick and (self.joystick:isGamepadDown("dpleft") or useful.dead(self.joystick:getGamepadAxis("leftx")) < 0))
+		then
+			newPosition.x = newPosition.x - 1
+			self.direction = "left"
+	end
+	-- Right
+	if (not self.joystick and love.keyboard.isDown("right", "d"))
+		or
+		(self.joystick and (self.joystick:isGamepadDown("dpright") or useful.dead(self.joystick:getGamepadAxis("leftx")) > 0))
+		then
+			newPosition.x = newPosition.x + 1
+			self.direction = "right"
+	end
+	-- Down
+	if (not self.joystick and love.keyboard.isDown("down", "s"))
+		or
+		(self.joystick and (self.joystick:isGamepadDown("dpdown") or useful.dead(self.joystick:getGamepadAxis("lefty")) > 0))
+		then
+			newPosition.y = newPosition.y + 1
+			self.direction = "down"
+	end
+	-- Up
+	if (not self.joystick and love.keyboard.isDown("up", "z", "w"))
+		or
+		(self.joystick and (self.joystick:isGamepadDown("dpup") or useful.dead(self.joystick:getGamepadAxis("lefty")) < 0))
+		then
+			newPosition.y = newPosition.y - 1
+			self.direction = "up"
+	end
+	--if map.cur and map.cur.isPossible(newPosition) then
 		self.position = newPosition
-
-		-- Shoot
-		if (not self.joystick and (love.keyboard.isDown("return") or love.keyboard.isDown("space") or love.mouse.isDown("l") or love.mouse.isDown("m") or love.mouse.isDown("r")))
-		   or
-		   (self.joystick and (self.joystick:isGamepadDown("a") or self.joystick:isGamepadDown("b") or
-		   self.joystick:isGamepadDown("x") or self.joystick:isGamepadDown("y") or
-		   self.joystick:isGamepadDown("leftshoulder") or self.joystick:isGamepadDown("rightshoulder") or
-		   useful.dead(self.joystick:getGamepadAxis("triggerleft")) > 0 or useful.dead(self.joystick:getGamepadAxis("triggerright")) > 0)) then
-				print ("Shoot")
-		end
 	--end
+
+	-- Shoot
+	if (not self.joystick and (love.keyboard.isDown("return", "space") or love.mouse.isDown("l", "m", "r")))
+		or
+		(self.joystick and (self.joystick:isGamepadDown("a", "b", "x", "y", "leftshoulder","rightshoulder") or
+		useful.dead(self.joystick:getGamepadAxis("triggerleft")) > 0 or useful.dead(self.joystick:getGamepadAxis("triggerright")) > 0)) then
+			print ("Shoot")
+	end
 end
 
 function brolaf_mt:draw()
