@@ -2,6 +2,7 @@ local state = {}
 
 function state:init()
 	Room.new()
+	brolaf.new()
 end
 
 
@@ -14,11 +15,13 @@ end
 
 
 function state:update(dt)
+	brolaf.update(dt)
 end
 
 
 function state:draw()
 	Room.draw()
+	brolaf.draw()
 end
 
 
@@ -78,6 +81,12 @@ end
 
 
 function state:gamepadpressed(joystick, btn)
+	if joystick:isGamepadDown("start") and brolaf.cur then
+		brolaf.cur.joystick = joystick
+	end
+	if joystick:isGamepadDown("back") and brolaf.cur then
+		brolaf.cur.joystick = nil
+	end
 end
 
 

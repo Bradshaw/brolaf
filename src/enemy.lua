@@ -38,6 +38,6 @@ function enemy_mt:update( dt )
 end
 
 function enemy_mt:draw()
-	love.graphics.circle("fill", self.x, self.y, 4)
+	--love.graphics.circle("fill", self.x, self.y, 4)
 end
 
