@@ -28,7 +28,6 @@ function tile.new(options)
 	
 	self.Texture = options.Texture or "WallUp"
 	self.Image = tile.Textures[self.Texture]
-	print(self.Texture)
 
  	table.insert(tile.all, self)
 	return self

@@ -5,12 +5,19 @@ room.all = {}
 roomWidth = 16
 roomHeight = 10
 
+lRandom = love.math.random
+
 function room.new(options)
 	local self = setmetatable({}, {__index=room_mt})
 
 	local options = options or {}
 
 	self.WorldPosition = options.WorldPosition or {x = 0, y = 0}
+	local roomSeed = self.WorldPosition.x + 2500 * self.WorldPosition.y + 28460
+
+	print("room seed " .. roomSeed)
+	love.math.setRandomSeed(roomSeed)
+
 
 	self.Tiles = {}
 	self.Enemies = {}
@@ -18,8 +25,14 @@ function room.new(options)
 
 	self.LogicTiles = {}
 	
-	self:CreatTiles()
-	self:InstanciateTiles()
+	self:CreatTiles() -- init room
+-- room generation and stuff
+	while not isRoomValid do
+		self:PlaceWalls(7)
+		isRoomValid = true
+	end
+	
+	self:InstanciateTiles() -- instanciate tiles
 
 	table.insert(room.all, self)
 	return self
@@ -122,8 +135,54 @@ function room_mt:GetWallText(x,y)
 
 end
 
+function room_mt:PlaceWalls(nb)
+	for i = 1,nb do
+		self:PlaceRandomWall()
+	end
+end
+
+function room_mt:PlaceRandomWall()
+	local wp = {
+		{x = -1, y =  0},
+		{x =  1, y =  0},
+		{x =  0, y = -1},
+		{x =  0, y =  1},
+	}
+
+	rx = math.ceil(lRandom(roomWidth - 1)) 
+	ry = math.ceil(lRandom(roomHeight - 1)) 
+	local ti = self:GetTilesInfos(rx,ry)
+	print(ti.tileType)
+	if ti and (ti ~= {}) and (ti.tileType ~= "Wall") then
+		ti.tileType = "Wall"
+		self:SetTileInfos(ti)
+	end
+	local d = wp[math.ceil(lRandom(#wp))]
+
+	local dx = rx + d.x
+	local dy = ry + d.y
+	ti = self:GetTilesInfos(dx,dy)
+	if ti and (ti ~= {}) and (ti.tileType ~= "Wall") then
+		ti.tileType = "Wall"
+		self:SetTileInfos(ti)
+	end
+
+	d = wp[math.ceil(lRandom(#wp))]
+	dx = rx + d.x
+	dy = ry + d.y
+	ti = self:GetTilesInfos(dx,dy)
+	if ti and (ti ~= {}) and (ti.tileType ~= "Wall") then
+		ti.tileType = "Wall"
+		self:SetTileInfos(ti)
+	end
+end
+
+function room_mt:SetTileInfos(infos)
+	local index = (infos.x) + (infos.y-1) * roomWidth
+	self.LogicTiles[index] = infos
+end
 
 function room_mt:GetTilesInfos(px,py)
-	local index = px + py * roomWidth
-	return self.LogicTiles[index] or {}
+	local index = (px) + (py-1) * roomWidth
+	return self.LogicTiles[index] or {x = px, y = py, "Wall" }
 end
