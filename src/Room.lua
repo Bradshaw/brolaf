@@ -90,9 +90,31 @@ end
 
 function room_mt:InstanciateTiles()
 	for _,tileInfos in ipairs(self.LogicTiles) do
-		tileInfos.Texture = "Ground1"
-		if tileInfos.tileType == "Wall" then
-			tileInfos.Texture = self:GetWallText(tileInfos.x,tileInfos.y)
+		if tileInfos.x==1 or tileInfos.x==16 or tileInfos.y==1 or tileInfos.y==10 then
+			local conString = "Wall"
+			local edges = 0
+			if tileInfos.y==1 then
+				edges = edges+1
+				conString = conString.."Up"
+			elseif tileInfos.y==10 then
+				edges = edges+1
+				conString = conString.."Down"
+			end
+			if tileInfos.x==1 then
+				edges = edges+1
+				conString = conString.."Left"
+			elseif tileInfos.x==16 then
+				edges = edges+1
+				conString = conString.."Right"
+			end
+			if edges == 1 and lRandom()>0.6 then
+				conString = conString.."Var"
+			end
+			tileInfos.Texture = conString
+		elseif tileInfos.tileType == "Wall" then
+			tileInfos.Texture = "Rock"
+		else
+			tileInfos.Texture = "Ground1"	
 		end
 		table.insert(self.Tiles, tile.new(tileInfos))
 	end

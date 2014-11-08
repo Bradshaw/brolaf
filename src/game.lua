@@ -24,9 +24,16 @@ end
 function state:draw()
 	screenCanvas:clear()
 	love.graphics.setCanvas(screenCanvas)
+
+
+	-- Do drawing between here...
 	love.graphics.rectangle("fill",0,0,640,360)
 	room.draw()
 	brolaf.draw()
+	enemy.draw()
+
+	-- And here
+
 	love.graphics.setCanvas()
 	love.graphics.draw(
 		screenCanvas,
@@ -38,8 +45,6 @@ function state:draw()
 		screenCanvas:getWidth()/2,
 		screenCanvas:getHeight()/2
 	)
-	brolaf.draw()
-	enemy.draw()
 end
 
 
