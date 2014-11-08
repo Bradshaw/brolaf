@@ -6,7 +6,7 @@ function brolaf.new(options)
 	local self = setmetatable({}, {__index=brolaf_mt})
 
 	local options = options or {}
-	self.position = options.position or vec2.new(0, 0)
+	self.position = options.position or vec2.new(40, 40)
 
 	self.speed = 0.4
 	self.hp = 5
@@ -51,34 +51,34 @@ function brolaf_mt:update( dt )
 	-- Movement
 	currentDirection = vec2.new(0, 0)
 	-- Left
-	if (not self.joystick and love.keyboard.isDown("left", "q", "a"))
+	if ((not self.joystick and love.keyboard.isDown("left", "q", "a"))
 		or
-		(self.joystick and (self.joystick:isGamepadDown("dpleft") or useful.dead(self.joystick:getGamepadAxis("leftx")) < 0))
-		--and map.cur and map.isPossible(self.position:add(vec2.new(-self.speed, 0)))
+		(self.joystick and (self.joystick:isGamepadDown("dpleft") or useful.dead(self.joystick:getGamepadAxis("leftx")) < 0)))
+		and room and room.cur:IsPathWalkablePixel(self.position:add(vec2.new(-self.speed, 0)))
 		then
 			currentDirection = currentDirection:add(vec2.new(-self.speed, 0))
 	end
 	-- Right
-	if (not self.joystick and love.keyboard.isDown("right", "d"))
+	if ((not self.joystick and love.keyboard.isDown("right", "d"))
 		or
-		(self.joystick and (self.joystick:isGamepadDown("dpright") or useful.dead(self.joystick:getGamepadAxis("leftx")) > 0))
-		--and map.cur and map.isPossible(self.position:add(vec2.new(self.speed, 0)))
+		(self.joystick and (self.joystick:isGamepadDown("dpright") or useful.dead(self.joystick:getGamepadAxis("leftx")) > 0)))
+		and room and room.cur:IsPathWalkablePixel(self.position:add(vec2.new(self.speed, 0)))
 		then
 			currentDirection = currentDirection:add(vec2.new(self.speed, 0))
 	end
 	-- Down
-	if (not self.joystick and love.keyboard.isDown("down", "s"))
+	if ((not self.joystick and love.keyboard.isDown("down", "s"))
 		or
-		(self.joystick and (self.joystick:isGamepadDown("dpdown") or useful.dead(self.joystick:getGamepadAxis("lefty")) > 0))
-		--and map.cur and map.isPossible(self.position:add(vec2.new(0, self.speed)))
+		(self.joystick and (self.joystick:isGamepadDown("dpdown") or useful.dead(self.joystick:getGamepadAxis("lefty")) > 0)))
+		and room and room.cur:IsPathWalkablePixel(self.position:add(vec2.new(0, self.speed)))
 		then
 			currentDirection = currentDirection:add(vec2.new(0, self.speed))
 	end
 	-- Up
-	if (not self.joystick and love.keyboard.isDown("up", "z", "w"))
+	if ((not self.joystick and love.keyboard.isDown("up", "z", "w"))
 		or
-		(self.joystick and (self.joystick:isGamepadDown("dpup") or useful.dead(self.joystick:getGamepadAxis("lefty")) < 0))
-		--and map.cur and map.isPossible(self.position:add(vec2.new(0, -self.speed)))
+		(self.joystick and (self.joystick:isGamepadDown("dpup") or useful.dead(self.joystick:getGamepadAxis("lefty")) < 0)))
+		and room and room.cur:IsPathWalkablePixel(self.position:add(vec2.new(0, -self.speed)))
 		then
 			currentDirection = currentDirection:add(vec2.new(0, -self.speed))
 	end

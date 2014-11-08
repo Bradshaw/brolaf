@@ -88,21 +88,21 @@ function enemy_mt:update( dt )
 			end
 		else
 			newPosition = self.position:add(self.directionCharge:mul(self.typeEnemy.speed * dt))
-			--if map.cur and map.isPossible(newPosition) then
+			if room and room.cur:IsPathWalkablePixel(newPosition) then
 				self.position = newPosition
 				self:hit(dt)
-			--else
-			--self.currentTimerBeforeCharge = 0
-			--end
+			else
+				self.currentTimerBeforeCharge = 0
+			end
 		end
 	else
 		if not self:hit(dt) then
-			--directionMovement = map.nextPosition(self.position, brolaf.position())
+			--directionMovement = room.nextPosition(self.position, brolaf.position())
 			directionMovement = brolaf:position():sub(self.position):normalized()
 			newPosition = self.position:add(directionMovement:mul(self.typeEnemy.speed * dt))
-			--if map.cur and map.isPossible(newPosition) then
+			if room and room.cur:IsPathWalkablePixel(newPosition) then
 				self.position = newPosition
-			--end
+			end
 		end
 	end
 end
@@ -130,8 +130,6 @@ function enemy_mt:takeDamage( damage )
 	self.hp = self.hp - damage
 	if self.hp <= 0 then
 		self.hp = 0
-		print ("Dead Enemy")
-	else
-		print ("HP Enemy ", self.hp)
+		self.purge = true
 	end
 end
