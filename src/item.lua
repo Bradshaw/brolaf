@@ -2,7 +2,7 @@ local item_mt = {}
 item = {}
 item.all = {}
 
-itemTypes = {"beer", "hydromel"}
+itemTypes = {"beer","beer","beer","beer","beer", "hydromel"}
 local itemsDescriptor = {
 	beer = {
 		hp = 2
