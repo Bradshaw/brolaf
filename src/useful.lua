@@ -31,3 +31,12 @@ end
 function useful.isClosest(pos1, pos2, sizeVisible)
 	return pos2:sub(pos1):length() <= sizeVisible
 end
+
+function table.find(tb,obj)
+	for i,o2 in ipairs(tb) do
+		if obj == o2 then
+			return i
+		end
+	end
+	return false
+end
