@@ -12,6 +12,10 @@ function Tile.new(options)
 	self.Position.x = options.x or 0
 	self.Position.y = options.y or 0
 	
+	self.Texture = options.Texture or "WallUp"
+	self.Image = Textures[self.Texture]
+	print(self.Texture)
+
  	table.insert(Tile.all, self)
 	return self
 end
@@ -30,10 +34,7 @@ function Tile.update( dt )
 	end
 end
 
-
-TILE_WIDTH 		= 65
-TILE_HEIGHT 	= 57
-TILE_PAD		= 15
+TILE_SCALE = 2
 
 function Tile.draw(  )
 	for i,v in ipairs(Tile.all) do
@@ -46,17 +47,9 @@ function Tile_mt:update( dt )
 end
 
 function Tile_mt:draw()
-	local ofst = TILE_PAD / 2
-	local posx = (self.Position.x  -1 ) * (TILE_WIDTH + TILE_PAD) + ofst
-	local posy = (self.Position.y - 1 ) * (TILE_HEIGHT + TILE_PAD) + ofst
-	local vertices = 
-	{
-		posx				, posy, 
-		posx + TILE_WIDTH	, posy,
-		posx + TILE_WIDTH	, posy + TILE_HEIGHT,
-		posx				, posy + TILE_HEIGHT,
-	}
 
-	-- passing the table to the function as a second argument
-	love.graphics.polygon('fill', vertices)
+	local posx = (self.Position.x  -1 ) * self.Image:getWidth() * TILE_SCALE
+	local posy = (self.Position.y - 1 ) * self.Image:getHeight() * TILE_SCALE
+
+	love.graphics.draw(self.Image, posx, posy,nil, TILE_SCALE, TILE_SCALE)
 end
