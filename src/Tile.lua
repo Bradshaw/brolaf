@@ -28,7 +28,6 @@ tile.GPInfos = {
 	},
 }
 
-tile.Dimentions = {x = 32, y = 32} -- WARNING MAGIC VALUE DID 
 
 function tile.new(options)
 	local self = setmetatable({}, {__index=tile_mt}) 	
@@ -43,10 +42,6 @@ function tile.new(options)
 	self.Texture = options.Texture or "WallUp"
 	self.Image = tile.Textures[self.Texture]
 
-	tile.Dimentions = {
-		x = self.Image:getWidth(), 
-		y = self.Image:getHeight(), 
-	}
  	table.insert(tile.all, self)
 	return self
 end

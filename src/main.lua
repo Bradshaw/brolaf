@@ -2,7 +2,7 @@ require("useful")
 
 G = {
 	SCALE = __DEBUG__ and 1 or 2,
-	TRUC = 5
+	TILE_SIZE = 32,
 }
 
 function love.load(arg)

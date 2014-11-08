@@ -2,6 +2,7 @@ local enemy_mt = {}
 enemy = {}
 enemy.all = {}
 
+enemyTypes = {"skeleton","boar"}
 local enemiesDescriptor = {
 	skeleton = {
 		speed = 180,
