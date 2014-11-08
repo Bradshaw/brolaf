@@ -27,7 +27,7 @@ function room.new(options)
 	while not isRoomValid do
 		self:PlaceWalls(7)
 
-		self:addRandomEnemies(6)
+		self:addRandomEnemies(2)
 
 		isRoomValid = self:CheckRoomIntegrity()
 	end
@@ -215,13 +215,25 @@ function room_mt:IsPathBlocked(px,py)
 end
 
 function room_mt:IsPathWalkablePixel(position)
-	local x,y = self:getIntegerCoordinate(position.x,position.y)
+	local x,y = self:getIntegerCoordinate(position.x, position.y)
 	return self:IsTileWalkable(x,y)
 end
 
 function room_mt:IsPathBlockedPixel(position)
-	local x,y = self:getIntegerCoordinate(position.x,position.y)
+	local x,y = self:getIntegerCoordinate(position.x, position.y)
 	return self:IsPathBlocked(x,y)
+end
+
+function room_mt:isVisibleFrom(fromX, fromY, toX, toY)
+	return useful.bline(fromX,fromY,toX,toY,function(x,y)
+		return self:IsPathBlocked(x,y)
+	end)
+end
+
+function room_mt:isVisibleFromPixel(positionFrom, positionCheck)
+	local xFrom, yFrom = self:getIntegerCoordinate(positionFrom.x, positionFrom.y)
+	local xTo, yTo = self:getIntegerCoordinate(positionCheck.x, positionCheck.y)
+	return self:isVisibleFrom(xFrom, yFrom, xTo, yTo)
 end
 
 function room_mt:CheckRoomIntegrity()
@@ -269,6 +281,6 @@ function room_mt:addRandomPosition()
 
 	enemy.new({
 		position = vec2.new(x,y),
-		typeEnemy = enemyType
+		typeEnemy = "skeleton"
 	})
 end

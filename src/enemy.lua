@@ -97,11 +97,12 @@ function enemy_mt:update( dt )
 		end
 	else
 		if not self:hit(dt) then
-			--directionMovement = room.nextPosition(self.position, brolaf.position())
-			directionMovement = brolaf:position():sub(self.position):normalized()
-			newPosition = self.position:add(directionMovement:mul(self.typeEnemy.speed * dt))
-			if room and room.cur:IsPathWalkablePixel(newPosition) then
-				self.position = newPosition
+			if room.cur:isVisibleFromPixel(self.position, brolaf:position()) then
+				directionMovement = brolaf:position():sub(self.position):normalized()
+				newPosition = self.position:add(directionMovement:mul(self.typeEnemy.speed * dt))
+				if room and room.cur:IsPathWalkablePixel(newPosition) then
+					self.position = newPosition
+				end
 			end
 		end
 	end
