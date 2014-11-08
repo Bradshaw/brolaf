@@ -1,10 +1,16 @@
 require("useful")
 function love.load(arg)
+ 	
 
-	math.randomseed(os.time())
+ 	local seed = 10 or os.time()
+	math.randomseed(seed)
 
+	love.window.setMode( 1280, 720)
+	
 	require("brolaf")
 	require("enemy")
+	require("Room")
+	require("Tile")
 
 	gstate = require "gamestate"
 	game = require("game")
