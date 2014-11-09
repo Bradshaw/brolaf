@@ -9,9 +9,25 @@ nbEnemy = 4
 
 lRandom = love.math.random
 
+local direction = {
+	left  = { x = -1, y =  0 },
+	right = { x =  1, y =  0 },
+	down  = { x =  0, y = -1 },
+	up    = { x =  0, y =  1 },
+	zero  = { x =  0, y =  0 }
+}
+local directionPosition = {
+	left  = 1,
+	right = 2,
+	down  = 3,
+	up    = 4,
+	zero  = 1
+}
+
 function room.resetVars()
 	enemy.all = {}
 	tile.all = {}
+	item.all = {}
 end
 
 function room.new(options)
@@ -19,14 +35,8 @@ function room.new(options)
 
 	local options = options or {}
 
-	-- Reset list of items and enemies
-	if not options.noReplace then
-		enemy.all = {}
-		item.all = {}
-		tile.all = {}
-	end
-
-	self.WorldPosition = options.WorldPosition or {x = 0, y = 0}
+	direction = direction[options.DirectionDoor or "zero"]
+	self.WorldPosition = (options.PreviousPosition or vec2.new(0, 0)):add(direction)
 	local roomSeed = self.WorldPosition.x + 2500 * self.WorldPosition.y + 2848
 	roomSeed = (roomSeed~=0) and roomSeed or 1
 	print("room seed " .. roomSeed)
@@ -54,6 +64,11 @@ function room.new(options)
 	
 	self:InstanciateTiles() -- instanciate tiles
 
+	if options.Player then
+		door = self.Doors[directionPosition[options.DirectionDoor or "zero"]]
+		px, py = getPixelPositions(door.x + direction.x, door.y + direction.y)
+		options.Player.position = vec2.new(px, py)
+	end
 	if not options.noReplace then
 		room.cur = self
 	end

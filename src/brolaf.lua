@@ -63,43 +63,61 @@ function brolaf.addTimeHyperKill( timeHyperKill )
 end
 
 function brolaf_mt:update( dt )
-	-- Movement
-	currentDirection = vec2.new(0, 0)
-	-- Left
-	if ((not self.joystick and love.keyboard.isDown("left", "q", "a"))
-		or
-		(self.joystick and (self.joystick:isGamepadDown("dpleft") or useful.dead(self.joystick:getGamepadAxis("leftx")) < 0)))
-		and room and room.cur:IsPathWalkablePixel(self.position:add(vec2.new(-self.speed, 0)))
-		then
-			currentDirection = currentDirection:add(vec2.new(-self.speed, 0))
-	end
-	-- Right
-	if ((not self.joystick and love.keyboard.isDown("right", "d"))
-		or
-		(self.joystick and (self.joystick:isGamepadDown("dpright") or useful.dead(self.joystick:getGamepadAxis("leftx")) > 0)))
-		and room and room.cur:IsPathWalkablePixel(self.position:add(vec2.new(self.speed, 0)))
-		then
-			currentDirection = currentDirection:add(vec2.new(self.speed, 0))
-	end
-	-- Down
-	if ((not self.joystick and love.keyboard.isDown("down", "s"))
-		or
-		(self.joystick and (self.joystick:isGamepadDown("dpdown") or useful.dead(self.joystick:getGamepadAxis("lefty")) > 0)))
-		and room and room.cur:IsPathWalkablePixel(self.position:add(vec2.new(0, self.speed)))
-		then
-			currentDirection = currentDirection:add(vec2.new(0, self.speed))
-	end
-	-- Up
-	if ((not self.joystick and love.keyboard.isDown("up", "z", "w"))
-		or
-		(self.joystick and (self.joystick:isGamepadDown("dpup") or useful.dead(self.joystick:getGamepadAxis("lefty")) < 0)))
-		and room and room.cur:IsPathWalkablePixel(self.position:add(vec2.new(0, -self.speed)))
-		then
-			currentDirection = currentDirection:add(vec2.new(0, -self.speed))
-	end
-	self.position = self.position:add(currentDirection)
-	if not currentDirection.x == 0 or not currentDirection.y == 0 then
-		self.currentDirection = currentDirection
+	if room then
+		-- Movement
+		currentDirection = vec2.new(0, 0)
+		-- Left
+		if ((not self.joystick and love.keyboard.isDown("left", "q", "a"))
+			or
+			(self.joystick and (self.joystick:isGamepadDown("dpleft") or useful.dead(self.joystick:getGamepadAxis("leftx")) < 0)))
+			then
+				tempNewPosition = self.position:add(vec2.new(-self.speed, 0))
+				if room.cur:IsPathWalkablePixel(tempNewPosition) then
+					currentDirection = currentDirection:add(vec2.new(-self.speed, 0))
+				elseif room.cur:IsTileDoorPixel(tempNewPosition) then
+				    room.new({ noReplace = false, PreviousPosition = room.cur.WorldPosition, DirectionDoor = "left", Player = self })
+				end
+		end
+		-- Right
+		if ((not self.joystick and love.keyboard.isDown("right", "d"))
+			or
+			(self.joystick and (self.joystick:isGamepadDown("dpright") or useful.dead(self.joystick:getGamepadAxis("leftx")) > 0)))
+			then
+				tempNewPosition = self.position:add(vec2.new(self.speed, 0))
+				if room.cur:IsPathWalkablePixel(tempNewPosition) then
+					currentDirection = currentDirection:add(vec2.new(self.speed, 0))
+				elseif room.cur:IsTileDoorPixel(tempNewPosition) then
+				    room.new({ noReplace = false, PreviousPosition = room.cur.WorldPosition, DirectionDoor = "right", Player = self })
+				end
+		end
+		-- Down
+		if ((not self.joystick and love.keyboard.isDown("down", "s"))
+			or
+			(self.joystick and (self.joystick:isGamepadDown("dpdown") or useful.dead(self.joystick:getGamepadAxis("lefty")) > 0)))
+			then
+				tempNewPosition = self.position:add(vec2.new(0, self.speed))
+				if room.cur:IsPathWalkablePixel(tempNewPosition) then
+					currentDirection = currentDirection:add(vec2.new(0, self.speed))
+				elseif room.cur:IsTileDoorPixel(tempNewPosition) then
+				    room.new({ noReplace = false, PreviousPosition = room.cur.WorldPosition, DirectionDoor = "down", Player = self })
+				end
+		end
+		-- Up
+		if ((not self.joystick and love.keyboard.isDown("up", "z", "w"))
+			or
+			(self.joystick and (self.joystick:isGamepadDown("dpup") or useful.dead(self.joystick:getGamepadAxis("lefty")) < 0)))
+			then
+				tempNewPosition = self.position:add(vec2.new(0, -self.speed))
+				if room.cur:IsPathWalkablePixel(tempNewPosition) then
+					currentDirection = currentDirection:add(vec2.new(0, -self.speed))
+				elseif room.cur:IsTileDoorPixel(tempNewPosition) then
+				    room.new({ noReplace = false, PreviousPosition = room.cur.WorldPosition, DirectionDoor = "up", Player = self })
+				end
+		end
+		self.position = self.position:add(currentDirection)
+		if not currentDirection.x == 0 or not currentDirection.y == 0 then
+			self.currentDirection = currentDirection
+		end
 	end
 
 	-- Shoot
