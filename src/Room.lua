@@ -136,7 +136,20 @@ end
 function room_mt:InstanciateTiles()
 	for _,tileInfos in ipairs(self.LogicTiles) do
 		if tileInfos.tileType == "Door" then
-			tileInfos.Texture ="Placeholder"
+			local conString = "Door"
+			if tileInfos.y==1 then
+				conString = conString.."Up"
+			elseif tileInfos.y==10 then
+				conString = conString.."Down"
+			end
+			if tileInfos.x==1 then
+				conString = conString.."Left"
+			elseif tileInfos.x==16 then
+				conString = conString.."Right"
+			end
+			print(conString)
+			tileInfos.Texture = conString
+
 		elseif tileInfos.x==1 or tileInfos.x==16 or tileInfos.y==1 or tileInfos.y==10 then
 			local conString = "Wall"
 			local edges = 0
