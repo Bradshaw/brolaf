@@ -126,13 +126,13 @@ function brolaf_mt:update( dt )
 			self.currentDirection = currentDirection
 		end
 	end
-	if currentDirection.x<-0.1 then
+	if currentDirection.x<-0.5 then
 		self.currentDrawDirection="left"
-	elseif currentDirection.x>0.1 then
+	elseif currentDirection.x>0.5 then
 		self.currentDrawDirection="right"
-	elseif currentDirection.y<-0.1 then
+	elseif currentDirection.y<-0.5 then
 		self.currentDrawDirection="up"
-	elseif currentDirection.y>0.1 then
+	elseif currentDirection.y>0.5 then
 		self.currentDrawDirection="down"
 	end
 

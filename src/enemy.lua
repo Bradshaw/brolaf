@@ -86,12 +86,24 @@ function enemy_mt:update( dt )
 	if self.typeEnemy.timeBeforeCharge then
 		self.currentTimerHit = self.currentTimerHit + dt
 		if self.currentTimerBeforeCharge < self.typeEnemy.timeBeforeCharge then
+			self.charging = false
 			self.currentTimerBeforeCharge = self.currentTimerBeforeCharge + dt
 			if self.currentTimerBeforeCharge >= self.typeEnemy.timeBeforeCharge then
 				self.directionCharge = brolaf:position():sub(self.position):normalized()
 			end
 		else
+			self.charging = true
 			newPosition = self.position:add(self.directionCharge:mul(self.typeEnemy.speed * dt))
+			local directionMovement = self.directionCharge
+			if directionMovement.x<-0.5 then
+				self.currentDrawDirection="left"
+			elseif directionMovement.x>0.5 then
+				self.currentDrawDirection="right"
+			elseif directionMovement.y<-0.5 then
+				self.currentDrawDirection="up"
+			elseif directionMovement.y>0.5 then
+				self.currentDrawDirection="down"
+			end
 			if room and room.cur:IsPathWalkablePixel(newPosition) and not self:hit(dt) then
 				self.position = newPosition
 			else
@@ -107,13 +119,13 @@ function enemy_mt:update( dt )
 					self.position = newPosition
 				end
 
-				if directionMovement.x<-0.1 then
+				if directionMovement.x<-0.5 then
 					self.currentDrawDirection="left"
-				elseif directionMovement.x>0.1 then
+				elseif directionMovement.x>0.5 then
 					self.currentDrawDirection="right"
-				elseif directionMovement.y<-0.1 then
+				elseif directionMovement.y<-0.5 then
 					self.currentDrawDirection="up"
-				elseif directionMovement.y>0.1 then
+				elseif directionMovement.y>0.5 then
 					self.currentDrawDirection="down"
 				end
 
@@ -124,6 +136,7 @@ end
 
 function enemy_mt:hit( dt )
 	if useful.isClosest(self.position, brolaf:position(), self.typeEnemy.rangeDamage) then
+		self.currentTimerHit = self.currentTimerHit + dt
 		if self.currentTimerHit >= self.typeEnemy.rateDamage then
 			brolaf.takeDamage(self.typeEnemy.damage)
 			self.currentTimerHit = 0
@@ -140,8 +153,21 @@ function enemy_mt:draw()
 		up = "back",
 		down = "front"
 	})[self.currentDrawDirection];
+	local vib = 0
+	if not self.charging and self.currentTimerBeforeCharge then
+		vib = (self.currentTimerBeforeCharge / self.typeEnemy.timeBeforeCharge)*3
+	end
 
-	love.graphics.draw(drawWord,self.position.x, self.position.y,0,1,1,16,32)
+	if not self.currentTimerBeforeCharge then
+		if self.currentTimerHit >= self.typeEnemy.rateDamage /2 then
+			love.graphics.print("AGROUGROU",self.position.x-font:getWidth("AGROUGROU")/2,self.position.y-42)
+		end
+	end
+
+	love.graphics.draw(drawWord,self.position.x+math.sin(love.timer.getTime()*320)*vib, self.position.y+math.sin(love.timer.getTime()*150)*vib,0,1,1,16,32)
+	if self.charging then
+		love.graphics.print("GRUIIIIK",self.position.x-font:getWidth("GRUIIIIK")/2,self.position.y-42)
+	end
 
 	--r, g, b, a = love.graphics.getColor()
 	--love.graphics.setColor(0, 0, 255, 255)
