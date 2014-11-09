@@ -35,6 +35,10 @@ function love.load(arg)
 
 
  	sprites:chopToAnimation("Swoosh_viking",6)
+	sprites:chopToAnimation("Viking_move_down", 4)
+	sprites:chopToAnimation("Viking_move_left", 4)
+	sprites:chopToAnimation("Viking_move_right", 4)
+	sprites:chopToAnimation("Viking_move_up", 4)
 
  	screenCanvas = love.graphics.newCanvas(640,360)
  	screenCanvas:setFilter("nearest","nearest")
