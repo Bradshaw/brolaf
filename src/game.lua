@@ -5,7 +5,6 @@ end
 
 
 function state:enter( pre )
-	brolaf.new({noReplace = false}) -- TO remove at the last
 	room.new({noReplace = false})
 end
 
@@ -28,7 +27,7 @@ function state:draw()
 
 
 	-- Do drawing between here...
-	love.graphics.rectangle("fill",0,0,640,360)
+	--love.graphics.rectangle("fill",0,0,640,360)
 	room.draw()
 	brolaf.draw()
 	enemy.draw()
