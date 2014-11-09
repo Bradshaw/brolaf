@@ -25,6 +25,7 @@ function brolaf.new(options)
 	self.positionMSGCENTER = { x = 237, y = 124 }
 	self.positionKILLUI = { x = 544, y = 96 }
 	self.numberEnemiesKill = 0
+	self.isMoving = false
 
 	self.currentDrawDirection = "down"
 
@@ -75,14 +76,17 @@ function brolaf_mt:update( dt )
 	if room then
 		-- Movement
 		currentDirection = vec2.new(0, 0)
+		self.isMoving = false
 		-- Left
 		if ((not self.joystick and love.keyboard.isDown("left", "q", "a"))
 			or
 			(self.joystick and (self.joystick:isGamepadDown("dpleft") or useful.dead(self.joystick:getGamepadAxis("leftx")) < 0)))
 			then
 				tempNewPosition = self.position:add(vec2.new(-self.speed * dt, 0))
+				self.currentDrawDirection="left"
 				if room.cur:IsPathWalkablePixel(tempNewPosition) then
 					currentDirection = currentDirection:add(vec2.new(-self.speed  * dt, 0))
+					self.isMoving = true
 				elseif room.cur:IsTileDoorPixel(tempNewPosition) then
 				    room.new({ noReplace = false, PreviousPosition = room.cur.WorldPosition, DirectionDoor = "left", Player = self })
 				end
@@ -93,8 +97,10 @@ function brolaf_mt:update( dt )
 			(self.joystick and (self.joystick:isGamepadDown("dpright") or useful.dead(self.joystick:getGamepadAxis("leftx")) > 0)))
 			then
 				tempNewPosition = self.position:add(vec2.new(self.speed * dt, 0))
+				self.currentDrawDirection="right"
 				if room.cur:IsPathWalkablePixel(tempNewPosition) then
 					currentDirection = currentDirection:add(vec2.new(self.speed * dt, 0))
+					self.isMoving = true
 				elseif room.cur:IsTileDoorPixel(tempNewPosition) then
 				    room.new({ noReplace = false, PreviousPosition = room.cur.WorldPosition, DirectionDoor = "right", Player = self })
 				end
@@ -105,8 +111,10 @@ function brolaf_mt:update( dt )
 			(self.joystick and (self.joystick:isGamepadDown("dpdown") or useful.dead(self.joystick:getGamepadAxis("lefty")) > 0)))
 			then
 				tempNewPosition = self.position:add(vec2.new(0, self.speed * dt))
+				self.currentDrawDirection="down"
 				if room.cur:IsPathWalkablePixel(tempNewPosition) then
 					currentDirection = currentDirection:add(vec2.new(0, self.speed * dt))
+					self.isMoving = true
 				elseif room.cur:IsTileDoorPixel(tempNewPosition) then
 				    room.new({ noReplace = false, PreviousPosition = room.cur.WorldPosition, DirectionDoor = "down", Player = self })
 				end
@@ -117,8 +125,10 @@ function brolaf_mt:update( dt )
 			(self.joystick and (self.joystick:isGamepadDown("dpup") or useful.dead(self.joystick:getGamepadAxis("lefty")) < 0)))
 			then
 				tempNewPosition = self.position:add(vec2.new(0, -self.speed * dt))
+				self.currentDrawDirection="up"
 				if room.cur:IsPathWalkablePixel(tempNewPosition) then
 					currentDirection = currentDirection:add(vec2.new(0, -self.speed * dt))
+					self.isMoving = true
 				elseif room.cur:IsTileDoorPixel(tempNewPosition) then
 				    room.new({ noReplace = false, PreviousPosition = room.cur.WorldPosition, DirectionDoor = "up", Player = self })
 				end
@@ -127,15 +137,6 @@ function brolaf_mt:update( dt )
 		if not currentDirection.x == 0 or not currentDirection.y == 0 then
 			self.currentDirection = currentDirection
 		end
-	end
-	if currentDirection.x<-0.5 then
-		self.currentDrawDirection="left"
-	elseif currentDirection.x>0.5 then
-		self.currentDrawDirection="right"
-	elseif currentDirection.y<-0.5 then
-		self.currentDrawDirection="up"
-	elseif currentDirection.y>0.5 then
-		self.currentDrawDirection="down"
 	end
 
 	-- Shoot
@@ -181,7 +182,12 @@ function brolaf_mt:draw()
 		up = "back",
 		down = "front"
 	})[self.currentDrawDirection];
-	love.graphics.draw("Viking_idle_"..drawWord, math.floor(self.position.x), math.floor(self.position.y), 0, 1, 1, 16,32)
+	if not self.isMoving then
+		love.graphics.draw("Viking_idle_"..drawWord, math.floor(self.position.x), math.floor(self.position.y), 0, 1, 1, 16,32)
+	else
+		print ("self.currentDrawDirection "..self.currentDrawDirection)
+		love.graphics.draw("ani_".."Viking_move_"..self.currentDrawDirection, math.floor(self.position.x), math.floor(self.position.y), 0, 1, 1, 16,32)
+	end
 	love.graphics.print("HP "..self.hp, self.positionHPUI.x, self.positionHPUI.y)
 	love.graphics.print("BONUS "..math.floor(self.timeHyperKill), self.positionBONUSUI.x, self.positionBONUSUI.y)
 	love.graphics.print("Kill "..self.numberEnemiesKill, self.positionKILLUI.x, self.positionKILLUI.y)

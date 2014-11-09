@@ -30,15 +30,15 @@ local directionPosition = {
 numberDifficulty = {
 	{ startNumberLevel =  0, numberEnemies = 1,  timerPause = 10 },
 	{ startNumberLevel =  1, numberEnemies = 2,  timerPause = 8  },
-	{ startNumberLevel = 10, numberEnemies = 3,  timerPause = 7  },
-	{ startNumberLevel = 20, numberEnemies = 4,  timerPause = 7  },
-	{ startNumberLevel = 25, numberEnemies = 5,  timerPause = 6  },
-	{ startNumberLevel = 30, numberEnemies = 6,  timerPause = 6  },
-	{ startNumberLevel = 35, numberEnemies = 7,  timerPause = 5  },
-	{ startNumberLevel = 40, numberEnemies = 8,  timerPause = 5  },
-	{ startNumberLevel = 45, numberEnemies = 9,  timerPause = 3  },
-	{ startNumberLevel = 50, numberEnemies = 10, timerPause = 3  },
-	{ startNumberLevel = 55, numberEnemies = 11, timerPause = 2  },
+	{ startNumberLevel = 10, numberEnemies = 2,  timerPause = 7  },
+	{ startNumberLevel = 20, numberEnemies = 3,  timerPause = 7  },
+	{ startNumberLevel = 25, numberEnemies = 3,  timerPause = 6  },
+	{ startNumberLevel = 30, numberEnemies = 4,  timerPause = 6  },
+	{ startNumberLevel = 35, numberEnemies = 4,  timerPause = 5  },
+	{ startNumberLevel = 40, numberEnemies = 4,  timerPause = 5  },
+	{ startNumberLevel = 45, numberEnemies = 4,  timerPause = 3  },
+	{ startNumberLevel = 50, numberEnemies = 4,  timerPause = 3  },
+	{ startNumberLevel = 55, numberEnemies = 4,  timerPause = 2  },
 }
 
 function room_mt:resetVars()
