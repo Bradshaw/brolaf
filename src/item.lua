@@ -66,7 +66,7 @@ function item_mt:update( dt )
 end
 
 function item_mt:draw()
-	love.graphics.draw(self.typeitemname,self.position.x,self.position.x,0,1,1,16,32)
+	love.graphics.draw(self.typeitemname,self.position.x,self.position.y,0,1,1,16,32)
 	--[[
 	r, g, b, a = love.graphics.getColor()
 	love.graphics.setColor(0, 255, 0, 255)
