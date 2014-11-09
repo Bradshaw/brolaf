@@ -8,7 +8,7 @@ function brolaf.new(options)
 	local options = options or {}
 	self.position = options.position or vec2.new(4.5*32, 4.5*32)
 
-	self.speed = 0.4
+	self.speed = 100
 	self.totalHp = 5
 	self.hp = self.totalHp
 	self.damage = 1
@@ -18,6 +18,8 @@ function brolaf.new(options)
 	self.currentDirection = vec2.new(0, 0)
 	self.rangeTakeItem = 15
 	self.timeHyperKill = 0
+
+	self.currentDrawDirection = "down"
 
 	if not options.noReplace then
 		brolaf.cur = self
@@ -71,9 +73,9 @@ function brolaf_mt:update( dt )
 			or
 			(self.joystick and (self.joystick:isGamepadDown("dpleft") or useful.dead(self.joystick:getGamepadAxis("leftx")) < 0)))
 			then
-				tempNewPosition = self.position:add(vec2.new(-self.speed, 0))
+				tempNewPosition = self.position:add(vec2.new(-self.speed * dt, 0))
 				if room.cur:IsPathWalkablePixel(tempNewPosition) then
-					currentDirection = currentDirection:add(vec2.new(-self.speed, 0))
+					currentDirection = currentDirection:add(vec2.new(-self.speed  * dt, 0))
 				elseif room.cur:IsTileDoorPixel(tempNewPosition) then
 				    room.new({ noReplace = false, PreviousPosition = room.cur.WorldPosition, DirectionDoor = "left", Player = self })
 				end
@@ -83,9 +85,9 @@ function brolaf_mt:update( dt )
 			or
 			(self.joystick and (self.joystick:isGamepadDown("dpright") or useful.dead(self.joystick:getGamepadAxis("leftx")) > 0)))
 			then
-				tempNewPosition = self.position:add(vec2.new(self.speed, 0))
+				tempNewPosition = self.position:add(vec2.new(self.speed * dt, 0))
 				if room.cur:IsPathWalkablePixel(tempNewPosition) then
-					currentDirection = currentDirection:add(vec2.new(self.speed, 0))
+					currentDirection = currentDirection:add(vec2.new(self.speed * dt, 0))
 				elseif room.cur:IsTileDoorPixel(tempNewPosition) then
 				    room.new({ noReplace = false, PreviousPosition = room.cur.WorldPosition, DirectionDoor = "right", Player = self })
 				end
@@ -95,9 +97,9 @@ function brolaf_mt:update( dt )
 			or
 			(self.joystick and (self.joystick:isGamepadDown("dpdown") or useful.dead(self.joystick:getGamepadAxis("lefty")) > 0)))
 			then
-				tempNewPosition = self.position:add(vec2.new(0, self.speed))
+				tempNewPosition = self.position:add(vec2.new(0, self.speed * dt))
 				if room.cur:IsPathWalkablePixel(tempNewPosition) then
-					currentDirection = currentDirection:add(vec2.new(0, self.speed))
+					currentDirection = currentDirection:add(vec2.new(0, self.speed * dt))
 				elseif room.cur:IsTileDoorPixel(tempNewPosition) then
 				    room.new({ noReplace = false, PreviousPosition = room.cur.WorldPosition, DirectionDoor = "down", Player = self })
 				end
@@ -107,9 +109,9 @@ function brolaf_mt:update( dt )
 			or
 			(self.joystick and (self.joystick:isGamepadDown("dpup") or useful.dead(self.joystick:getGamepadAxis("lefty")) < 0)))
 			then
-				tempNewPosition = self.position:add(vec2.new(0, -self.speed))
+				tempNewPosition = self.position:add(vec2.new(0, -self.speed * dt))
 				if room.cur:IsPathWalkablePixel(tempNewPosition) then
-					currentDirection = currentDirection:add(vec2.new(0, -self.speed))
+					currentDirection = currentDirection:add(vec2.new(0, -self.speed * dt))
 				elseif room.cur:IsTileDoorPixel(tempNewPosition) then
 				    room.new({ noReplace = false, PreviousPosition = room.cur.WorldPosition, DirectionDoor = "up", Player = self })
 				end
@@ -118,6 +120,15 @@ function brolaf_mt:update( dt )
 		if not currentDirection.x == 0 or not currentDirection.y == 0 then
 			self.currentDirection = currentDirection
 		end
+	end
+	if currentDirection.x<-0.1 then
+		self.currentDrawDirection="left"
+	elseif currentDirection.x>0.1 then
+		self.currentDrawDirection="right"
+	elseif currentDirection.y<-0.1 then
+		self.currentDrawDirection="up"
+	elseif currentDirection.y>0.1 then
+		self.currentDrawDirection="down"
 	end
 
 	-- Shoot
@@ -147,7 +158,13 @@ function brolaf_mt:update( dt )
 end
 
 function brolaf_mt:draw()
-	love.graphics.circle("fill", self.position.x, self.position.y, 4)
+	local drawWord = ({
+		left = "left",
+		right = "right",
+		up = "back",
+		down = "front"
+	})[self.currentDrawDirection];
+	love.graphics.draw("Viking_idle_"..drawWord, math.floor(self.position.x), math.floor(self.position.y), 0, 1, 1, 16,32)
 end
 
 function brolaf_mt:takeDamage( damage )
