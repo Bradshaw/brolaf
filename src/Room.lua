@@ -71,7 +71,7 @@ function room.new(options)
 		self:CreatTiles() -- init room
 		-- room generation and stuff
 		
-		self:PlaceWalls(7)
+		self:PlaceWalls(5)
 
 		self:PlaceFourDoors()
 
