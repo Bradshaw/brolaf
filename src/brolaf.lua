@@ -12,12 +12,14 @@ function brolaf.new(options)
 	self.totalHp = 5
 	self.hp = self.totalHp
 	self.damage = 1
-	self.rangeDamage = 30
+	self.rangeDamage = 40
 	self.rateDamage = 0.1
 	self.currentTimerHit = self.rateDamage
 	self.currentDirection = vec2.new(0, 0)
 	self.rangeTakeItem = 15
 	self.timeHyperKill = 0
+	self.positionHPUI = { x = 544, y = 64 }
+	self.positionBONUSUI = { x = 544, y = 96 }
 
 	self.currentDrawDirection = "down"
 
@@ -133,7 +135,12 @@ function brolaf_mt:update( dt )
 
 	-- Shoot
 	self.currentTimerHit = self.currentTimerHit + dt
-	self.timeHyperKill = self.timeHyperKill - dt
+	if self.timeHyperKill > 0 then
+		self.timeHyperKill = self.timeHyperKill - dt
+		if self.timeHyperKill < 0 then
+			self.timeHyperKill = 0
+		end
+	end
 	if ((not self.joystick and (love.keyboard.isDown("return", "space") or love.mouse.isDown("l", "m", "r")))
 		or
 		(self.joystick and (self.joystick:isGamepadDown("a", "b", "x", "y", "leftshoulder","rightshoulder") or
@@ -165,6 +172,8 @@ function brolaf_mt:draw()
 		down = "front"
 	})[self.currentDrawDirection];
 	love.graphics.draw("Viking_idle_"..drawWord, math.floor(self.position.x), math.floor(self.position.y), 0, 1, 1, 16,32)
+	love.graphics.print("HP "..self.hp, self.positionHPUI.x, self.positionHPUI.y)
+	love.graphics.print("BONUS "..self.timeHyperKill, self.positionBONUSUI.x, self.positionBONUSUI.y)
 end
 
 function brolaf_mt:takeDamage( damage )
@@ -174,8 +183,6 @@ function brolaf_mt:takeDamage( damage )
 		print ("Dead")
 		menu = require("menu")
 		gstate.switch(menu)
-	else
-		print ("HP ", self.hp)
 	end
 end
 
