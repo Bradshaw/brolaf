@@ -146,8 +146,8 @@ function room_mt:PlaceRandomWall()
 		{x =  0, y =  1},
 	}
 
-	rx = math.ceil(lRandom(roomWidth - 2))
-	ry = math.ceil(lRandom(roomHeight - 2))
+	rx = math.ceil(lRandom(roomWidth - 2)) + 1
+	ry = math.ceil(lRandom(roomHeight - 2)) + 1
 	local ti = self:GetTilesInfos(rx,ry)
 
 	if ti.tileType ~= "Wall" then
@@ -348,9 +348,11 @@ function room_mt:getRandomPositionInRoom()
 	return rx,ry
 end
 
-function room_mt:getTileFromSelection(selection)
+function room_mt:getTileFromSelection(selection,margin)
 	local found = false
+	local margin = margin or 0
 	local ri
+
 	while not found do
 		ri = math.ceil(lRandom(#selection))
 		found = selection[ri].tileType ~= "Door"

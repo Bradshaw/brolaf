@@ -8,7 +8,7 @@ function brolaf.new(options)
 	local options = options or {}
 	self.position = options.position or vec2.new(4.5*32, 4.5*32)
 
-	self.speed = 0.4
+	self.speed = 3.4
 	self.totalHp = 5
 	self.hp = self.totalHp
 	self.damage = 1

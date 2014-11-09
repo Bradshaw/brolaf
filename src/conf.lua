@@ -1,5 +1,5 @@
 function love.conf(t)
-    __DEBUG__ = true
+    --__DEBUG__ = true
 
     t.identity = "brolaf"                   -- The name of the save directory (string)
     t.version = "0.9.0"                -- The LÖVE version this game was made for (string)

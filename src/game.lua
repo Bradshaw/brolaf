@@ -15,7 +15,7 @@ end
 
 
 function state:update(dt)
-	local rdt = dt *0.25
+	local rdt = dt
 	brolaf.update(rdt)
 	enemy.update(rdt)
 	item.update(rdt)
