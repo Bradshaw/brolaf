@@ -2,12 +2,16 @@ require("useful")
 require("Stack")
 
 G = {
-	SCALE = __DEBUG__ and 1 or 3,
 	TILE_SIZE = 32,
 }
 
 function love.load(arg)
- 	
+
+	local hr = love.graphics.getWidth()/640
+	local vr = love.graphics.getHeight()/360
+	G.SCALE = math.floor(math.min(hr,vr))
+
+
  	fudge = require("fudge")
  	sprites = fudge.new("Assets",{
  		npot = true,

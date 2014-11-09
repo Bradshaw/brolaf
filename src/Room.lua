@@ -24,10 +24,13 @@ local directionPosition = {
 	zero  = { index = 1, nextDoor = "up"    }
 }
 
-function room.resetVars()
+function room_mt:resetVars()
 	enemy.all = {}
 	tile.all = {}
 	item.all = {}
+	self.Doors = {}
+	self.Tiles = {}
+	self.LogicTiles = {}
 end
 
 function room.new(options)
@@ -44,19 +47,13 @@ function room.new(options)
 
 	local isRoomValid = false
 	while not isRoomValid do
-		room.resetVars()
+		self:resetVars()
 
-		self.Tiles = {}
-
-		self.LogicTiles = {}
-
-		
 		self:CreatTiles() -- init room
 		-- room generation and stuff
 		
 		self:PlaceWalls(7)
 
-		self.Doors = {}
 		self:PlaceFourDoors()
 
 		isRoomValid = self:CheckRoomIntegrity()
@@ -170,7 +167,7 @@ function room_mt:PlaceRandomWall()
 	ry = math.ceil(lRandom(roomHeight - 2)) + 1
 	local ti = self:GetTilesInfos(rx,ry)
 
-	if ti.tileType ~= "Wall" then
+	if ti and (ti ~= {}) and ti.tileType ~= "Wall" then
 		ti.tileType = "Wall"
 		self:SetTileInfos(ti)
 	end
@@ -205,24 +202,28 @@ function room_mt:PlaceFourDoors()
 	self:SetTileInfos(door)
 	table.insert(self.Doors,door)
 	displayTi(door)
+	self:SetTileInfos({x = rx, y = 2, tileType = "Floor"})
 
 	rx = math.ceil(lRandom(roomWidth - 2)) + 1
 	door = {x = rx, y = roomHeight, tileType = "Door"}
 	self:SetTileInfos(door)
 	table.insert(self.Doors,door)
 	displayTi(door)
+	self:SetTileInfos({x = rx, y = roomHeight - 1, tileType = "Floor"})
 
 	local ry = math.ceil(lRandom(roomHeight - 2)) + 1
 	door = {x = 1, y = ry, tileType = "Door"}
 	self:SetTileInfos(door)
 	table.insert(self.Doors,door)
 	displayTi(door)
+	self:SetTileInfos({x = 2, y = ry , tileType = "Floor"})
 	
 	ry = math.ceil(lRandom(roomHeight - 2)) + 1
 	door = {x = roomWidth, y = ry, tileType = "Door"}
 	self:SetTileInfos(door)
 	table.insert(self.Doors,door)
 	displayTi(door)
+	self:SetTileInfos({x = roomWidth - 1, y = ry , tileType = "Floor"})
 end
 
 function room_mt:SetTileInfos(infos)
@@ -291,7 +292,7 @@ function room_mt:CheckRoomIntegrity()
 	end
 
 	for i= 1 , nbEnemy do
-		local ep = self:getTileFromSelection(floodList)
+		local ep = self:getTileFromSelection(floodList , 2)
 		self:CreateEnemyAtPosition(ep)
 		table.remove(floodList,table.find(floodList,ep))
 	end
@@ -365,14 +366,18 @@ function room_mt:getRandomPositionInRoom()
 	return rx,ry
 end
 
-function room_mt:getTileFromSelection(selection)
+function room_mt:getTileFromSelection(selection,margin)
 	local found = false
+	local margin = margin or 0
 	local ri
+
 	while not found do
 		ri = math.ceil(lRandom(#selection))
 		found = selection[ri].tileType ~= "Door"
+		found = found and selection[ri].x > margin and selection[ri].y > margin
+		found = found and selection[ri].x < (roomWidth - margin) and selection[ri].y < (roomHeight -margin)
 	end
-	return selection[ri]
+	return selection[ri] 
 end
 
 function room_mt:addRandomEnemies(nb)
