@@ -6,7 +6,7 @@ function brolaf.new(options)
 	local self = setmetatable({}, {__index=brolaf_mt})
 
 	local options = options or {}
-	self.position = options.position or vec2.new(4.5*32, 4.5*32)
+	self.position = options.position or vec2.new(8.5*32, 5.5*32)
 
 	self.attackCool = 0
 
