@@ -180,5 +180,7 @@ function enemy_mt:takeDamage( damage )
 	if self.hp <= 0 then
 		self.hp = 0
 		self.purge = true
+		return true
 	end
+	return false
 end

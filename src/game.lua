@@ -18,6 +18,14 @@ function gamegetDt(dt)
 
 	G.MESSAGE_TO_DISPLAY = ""
 	G.SHAKE = 0
+
+	index = 1
+	gamePauseOnNewRoom = 0
+	repeat
+		gamePauseOnNewRoom = numberDifficulty[index].timerPause
+		index = index + 1
+	until index > #numberDifficulty or not (numberDifficulty[index].startNumberLevel < room.numberRoomsGenerate)
+
 	if diff < gamePauseOnNewRoom then
 		local nbtd = math.floor(gamePauseOnNewRoom - diff + 1)
 		G.MESSAGE_TO_DISPLAY = tostring(nbtd)
@@ -37,6 +45,7 @@ function gamegetDt(dt)
 end
 
 function state:enter( pre )
+	room.numberRoomsGenerate = 0
 	room.new({noReplace = false})
 end
 

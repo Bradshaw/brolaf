@@ -1,6 +1,7 @@
 local room_mt = {}
 room = {}
 room.cur = nil
+room.numberRoomsGenerate = 0
 
 roomWidth = 16
 roomHeight = 10
@@ -26,6 +27,20 @@ local directionPosition = {
 	zero  = { index = 1, nextDoor = "up"    }
 }
 
+numberDifficulty = {
+	{ startNumberLevel =  0, numberEnemies = 1,  timerPause = 10 },
+	{ startNumberLevel =  1, numberEnemies = 2,  timerPause = 8  },
+	{ startNumberLevel = 10, numberEnemies = 3,  timerPause = 7  },
+	{ startNumberLevel = 20, numberEnemies = 4,  timerPause = 7  },
+	{ startNumberLevel = 25, numberEnemies = 5,  timerPause = 6  },
+	{ startNumberLevel = 30, numberEnemies = 6,  timerPause = 6  },
+	{ startNumberLevel = 35, numberEnemies = 7,  timerPause = 5  },
+	{ startNumberLevel = 40, numberEnemies = 8,  timerPause = 5  },
+	{ startNumberLevel = 45, numberEnemies = 9,  timerPause = 3  },
+	{ startNumberLevel = 50, numberEnemies = 10, timerPause = 3  },
+	{ startNumberLevel = 55, numberEnemies = 11, timerPause = 2  },
+}
+
 function room_mt:resetVars()
 	enemy.all = {}
 	tile.all = {}
@@ -46,6 +61,8 @@ function room.new(options)
 	roomSeed = (roomSeed~=0) and roomSeed or 1
 	print("room seed " .. roomSeed)
 	love.math.setRandomSeed(roomSeed)
+
+	room.numberRoomsGenerate = room.numberRoomsGenerate + 1
 
 	local isRoomValid = false
 	while not isRoomValid do
@@ -68,9 +85,6 @@ function room.new(options)
 		directionPlayerTemp = direction[directionPositionTemp.nextDoor]
 		door = self.Doors[directionPositionTemp.index]
 		px, py = self:getPixelPositions(door.x + directionPlayerTemp.x, door.y + directionPlayerTemp.y)
-		print ("new position door.x ", door.x, " door.y ", door.y)
-		print ("new position directionTemp.x ", directionTemp.x, " directionTemp.y ", directionTemp.y)
-		print ("new position x ", px, " y ", py)
 		options.Player.position = vec2.new(px, py)
 	end
 	if not options.noReplace then
@@ -301,6 +315,14 @@ function room_mt:CheckRoomIntegrity()
 	end
 
 	local enemyPool = {"skeleton","skeleton", "boar","boar"}
+
+	index = 1
+	nbEnemy = 0
+	repeat
+		nbEnemy = numberDifficulty[index].numberEnemies
+		index = index + 1
+	until index > #numberDifficulty or not (numberDifficulty[index].startNumberLevel < room.numberRoomsGenerate)
+
 	for i= 1 , nbEnemy do
 		local ep = self:getTileFromSelection(floodList , 2)
 		self:CreateEnemyAtPosition(ep,enemyPool)
