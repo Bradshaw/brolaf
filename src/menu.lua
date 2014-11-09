@@ -106,7 +106,7 @@ function state:keypressed(key, isRepeat)
 	if key=='escape' then
 		love.event.push('quit')
 	end
-	if key=='return' then
+	if key=='return' or key==' ' then
 		game = require("game")
 		gstate.switch(game)
 	end

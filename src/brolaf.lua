@@ -144,7 +144,7 @@ function brolaf_mt:update( dt )
 			self.timeHyperKill = 0
 		end
 	end
-	if ((not self.joystick and (love.keyboard.isDown("return", "space") or love.mouse.isDown("l", "m", "r")))
+	if ((not self.joystick and (love.keyboard.isDown("return", " ") or love.mouse.isDown("l", "m", "r")))
 		or
 		(self.joystick and (self.joystick:isGamepadDown("a", "b", "x", "y", "leftshoulder","rightshoulder") or
 		useful.dead(self.joystick:getGamepadAxis("triggerleft")) > 0 or useful.dead(self.joystick:getGamepadAxis("triggerright")) > 0)))
