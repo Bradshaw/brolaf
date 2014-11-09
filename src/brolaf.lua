@@ -21,8 +21,10 @@ function brolaf.new(options)
 	self.rangeTakeItem = 15
 	self.timeHyperKill = 0
 	self.positionHPUI = { x = 544, y = 64 }
-	self.positionBONUSUI = { x = 544, y = 96 }
+	self.positionBONUSUI = { x = 544, y = 80 }
 	self.positionMSGCENTER = { x = 237, y = 124 }
+	self.positionKILLUI = { x = 544, y = 96 }
+	self.numberEnemiesKill = 0
 
 	self.currentDrawDirection = "down"
 
@@ -153,9 +155,13 @@ function brolaf_mt:update( dt )
 			enemyClosest = enemy.findClosest(self.position, self.rangeDamage, self.currentDirection)
 			if enemyClosest then
 				if self.timeHyperKill > 0 then
-					enemyClosest:takeDamage(enemyClosest.hp)
+					if enemyClosest:takeDamage(enemyClosest.hp) then
+						self.numberEnemiesKill = self.numberEnemiesKill + 1
+					end
 				else
-					enemyClosest:takeDamage(self.damage)
+					if enemyClosest:takeDamage(self.damage) then
+						self.numberEnemiesKill = self.numberEnemiesKill + 1
+					end
 				end
 				self.currentTimerHit = 0
 			end
@@ -177,8 +183,8 @@ function brolaf_mt:draw()
 	})[self.currentDrawDirection];
 	love.graphics.draw("Viking_idle_"..drawWord, math.floor(self.position.x), math.floor(self.position.y), 0, 1, 1, 16,32)
 	love.graphics.print("HP "..self.hp, self.positionHPUI.x, self.positionHPUI.y)
-	love.graphics.print("BONUS "..self.timeHyperKill, self.positionBONUSUI.x, self.positionBONUSUI.y)
-
+	love.graphics.print("BONUS "..math.floor(self.timeHyperKill), self.positionBONUSUI.x, self.positionBONUSUI.y)
+	love.graphics.print("Kill "..self.numberEnemiesKill, self.positionKILLUI.x, self.positionKILLUI.y)
 	
 	local offsetx = font:getWidth(G.MESSAGE_TO_DISPLAY) / 2
 	local offsety = font:getHeight() /2

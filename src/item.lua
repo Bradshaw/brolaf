@@ -8,7 +8,7 @@ local itemsDescriptor = {
 		hp = 2
 	},
 	hydromel = {
-		timeHyperKill = 30
+		timeHyperKill = 15
 	}
 }
 
