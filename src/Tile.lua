@@ -19,6 +19,10 @@ tile.Textures =
 	Rock			= fudge.current:getPiece("Rock"),
 	Ground1			= fudge.current:getPiece("Ground1"),
 	Placeholder		= fudge.current:getPiece("PlaceHolderFloor"),
+	DoorUp =	fudge.current:getPiece("Door_up"),
+	DoorDown = 	fudge.current:getPiece("Door_down"),
+	DoorLeft =	fudge.current:getPiece("Door_left"),
+	DoorRight =	fudge.current:getPiece("Door_right"),
 }
 
 tile.GPInfos = {
