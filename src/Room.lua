@@ -5,7 +5,7 @@ room.cur = nil
 roomWidth = 16
 roomHeight = 10
 
-nbEnemy = 4
+nbEnemy = 2
 
 positionCoordinateUI = { x = 544, y = 16 }
 
@@ -295,9 +295,10 @@ function room_mt:CheckRoomIntegrity()
 		end
 	end
 
+	local enemyPool = {"skeleton","skeleton", "boar","boar"}
 	for i= 1 , nbEnemy do
 		local ep = self:getTileFromSelection(floodList , 2)
-		self:CreateEnemyAtPosition(ep)
+		self:CreateEnemyAtPosition(ep,enemyPool)
 		table.remove(floodList,table.find(floodList,ep))
 	end
 
@@ -390,11 +391,14 @@ function room_mt:addRandomEnemies(nb)
 	end
 end
 
-function room_mt:CreateEnemyAtPosition(infos)
+function room_mt:CreateEnemyAtPosition(infos,enemyPool)
 	
 	local x,y = self:getPixelPositions(infos.x,infos.y)
 
-	local enemyType = enemyTypes[math.ceil(lRandom(#enemyTypes))]
+	local index = math.ceil(lRandom(#enemyPool))
+
+	local enemyType = enemyPool[index]
+	table.remove(enemyPool,index)
 
 	enemy.new({
 		position = vec2.new(x,y),
