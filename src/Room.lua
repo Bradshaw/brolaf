@@ -229,6 +229,15 @@ function room_mt:IsPathBlocked(px,py)
 	return not self:IsTileWalkable(px,py)
 end
 
+function room_mt:IsTileDoor(posX,posY)
+	return (self:GetTilesInfos(posX,posY).tileType == "Door")
+end
+
+function room_mt:IsTileDoorPixel(position)
+	local x,y = self:getIntegerCoordinate(position.x, position.y)
+	return self:IsTileDoor(x,y)
+end
+
 function room_mt:IsPathWalkablePixel(position)
 	local x,y = self:getIntegerCoordinate(position.x, position.y)
 	return self:IsTileWalkable(x,y)
