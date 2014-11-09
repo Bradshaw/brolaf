@@ -34,7 +34,7 @@ function brolaf.new(options)
 	self.damage = 1
 	self.rangeDamage = 40
 	self.rateDamage = 0.1
-	self.currentTimerHit = self.rateDamage
+	self.currentTimerHit = 0
 	self.currentDirection = vec2.new(0, 0)
 	self.rangeTakeItem = 15
 	self.timeHyperKill = 0
@@ -243,7 +243,7 @@ function brolaf_mt:draw()
 	local shake = G.SHAKE
 	love.graphics.print(G.MESSAGE_TO_DISPLAY, self.positionMSGCENTER.x ,self.positionMSGCENTER.y,G.SHAKE,3,3,offsetx,offsety)
 
-	if math.ceil((1-self.attackCool)*6)>0 and math.ceil((1-self.attackCool)*6)<7 then
+	if self.attackCool ~= 0 and math.ceil((1-self.attackCool)*6)>0 and math.ceil((1-self.attackCool)*6)<7 then
 		local anim = math.ceil((1-self.attackCool)*6)
 		local attRot = ({
 			left = math.pi/2,
@@ -259,9 +259,8 @@ function brolaf_mt:takeDamage( damage )
 	self.hp = self.hp - damage
 	if self.hp <= 0 then
 		self.hp = 0
-		print ("Dead")
-		menu = require("menu")
-		gstate.switch(menu)
+		gameover = require("gameover")
+		gstate.switch(gameover)
 	end
 end
 
