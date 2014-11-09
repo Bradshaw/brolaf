@@ -26,6 +26,13 @@ function love.load(arg)
  	})
  	sprites.image:setFilter("nearest","nearest")
 
+ 	kludgedraw = love.graphics.draw
+
+	love.graphics.draw = function(dr, x, y, ...)
+		kludgedraw(dr, math.floor(x),math.floor(y),...)
+	end
+
+
 
  	sprites:chopToAnimation("Swoosh_viking",6)
 
