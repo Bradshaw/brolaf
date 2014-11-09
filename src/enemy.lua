@@ -18,7 +18,7 @@ local enemiesDescriptor = {
 		damage = 2,
 		rangeDamage = 30,
 		rateDamage = 0.4,
-		timeBeforeCharge = 1
+		timeBeforeCharge = 0.75
 	}
 }
 
@@ -35,7 +35,7 @@ function enemy.new(options)
 	self.hp = self.typeEnemy.hp
 
 	if self.typeEnemy.timeBeforeCharge then
-		self.currentTimerBeforeCharge = love.math.random(self.typeEnemy.timeBeforeCharge);
+		self.currentTimerBeforeCharge = love.math.random() * self.typeEnemy.timeBeforeCharge;
 		self.directionCharge = vec2.new(0, 0)
 	end
 
