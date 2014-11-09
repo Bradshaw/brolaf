@@ -10,18 +10,18 @@ nbEnemy = 4
 lRandom = love.math.random
 
 local direction = {
-	left  = { x = -1, y =  0 },
-	right = { x =  1, y =  0 },
+	left  = { x =  1, y =  0 },
+	right = { x = -1, y =  0 },
 	down  = { x =  0, y = -1 },
 	up    = { x =  0, y =  1 },
 	zero  = { x =  0, y =  0 }
 }
 local directionPosition = {
-	left  = 1,
-	right = 2,
-	down  = 3,
-	up    = 4,
-	zero  = 1
+	left  = { index = 4, nextDoor = "right" },
+	right = { index = 3, nextDoor = "left"  },
+	down  = { index = 1, nextDoor = "up"    },
+	up    = { index = 2, nextDoor = "down"  },
+	zero  = { index = 1, nextDoor = "up"    }
 }
 
 function room.resetVars()
@@ -35,8 +35,8 @@ function room.new(options)
 
 	local options = options or {}
 
-	direction = direction[options.DirectionDoor or "zero"]
-	self.WorldPosition = (options.PreviousPosition or vec2.new(0, 0)):add(direction)
+	directionTemp = direction[options.DirectionDoor or "zero"]
+	self.WorldPosition = (options.PreviousPosition or vec2.new(0, 0)):add(directionTemp)
 	local roomSeed = self.WorldPosition.x + 2500 * self.WorldPosition.y + 2848
 	roomSeed = (roomSeed~=0) and roomSeed or 1
 	print("room seed " .. roomSeed)
@@ -65,8 +65,13 @@ function room.new(options)
 	self:InstanciateTiles() -- instanciate tiles
 
 	if options.Player then
-		door = self.Doors[directionPosition[options.DirectionDoor or "zero"]]
-		px, py = getPixelPositions(door.x + direction.x, door.y + direction.y)
+		directionPositionTemp = directionPosition[options.DirectionDoor or "zero"]
+		directionPlayerTemp = direction[directionPositionTemp.nextDoor]
+		door = self.Doors[directionPositionTemp.index]
+		px, py = self:getPixelPositions(door.x + directionPlayerTemp.x, door.y + directionPlayerTemp.y)
+		print ("new position door.x ", door.x, " door.y ", door.y)
+		print ("new position directionTemp.x ", directionTemp.x, " directionTemp.y ", directionTemp.y)
+		print ("new position x ", px, " y ", py)
 		options.Player.position = vec2.new(px, py)
 	end
 	if not options.noReplace then
@@ -161,8 +166,8 @@ function room_mt:PlaceRandomWall()
 		{x =  0, y =  1},
 	}
 
-	rx = math.ceil(lRandom(roomWidth - 2))
-	ry = math.ceil(lRandom(roomHeight - 2))
+	rx = math.ceil(lRandom(roomWidth - 2)) + 1
+	ry = math.ceil(lRandom(roomHeight - 2)) + 1
 	local ti = self:GetTilesInfos(rx,ry)
 
 	if ti.tileType ~= "Wall" then
@@ -195,25 +200,25 @@ end
 
 function room_mt:PlaceFourDoors()
 	self.Doors = {}
-	local rx = math.ceil(lRandom(roomWidth - 2))
+	local rx = math.ceil(lRandom(roomWidth - 2)) + 1
 	local door = {x = rx, y = 1, tileType = "Door"}
 	self:SetTileInfos(door)
 	table.insert(self.Doors,door)
 	displayTi(door)
 
-	rx = math.ceil(lRandom(roomWidth - 2))
+	rx = math.ceil(lRandom(roomWidth - 2)) + 1
 	door = {x = rx, y = roomHeight, tileType = "Door"}
 	self:SetTileInfos(door)
 	table.insert(self.Doors,door)
 	displayTi(door)
 
-	local ry = math.ceil(lRandom(roomHeight - 2))
+	local ry = math.ceil(lRandom(roomHeight - 2)) + 1
 	door = {x = 1, y = ry, tileType = "Door"}
 	self:SetTileInfos(door)
 	table.insert(self.Doors,door)
 	displayTi(door)
 	
-	ry = math.ceil(lRandom(roomHeight - 2))
+	ry = math.ceil(lRandom(roomHeight - 2)) + 1
 	door = {x = roomWidth, y = ry, tileType = "Door"}
 	self:SetTileInfos(door)
 	table.insert(self.Doors,door)
@@ -230,7 +235,7 @@ function room_mt:GetTilesInfos(px,py)
 
 	local ret = self.LogicTiles[index] 
 	if not ret then 
-		print("outofbound ", px , "," , py)
+		--print("outofbound ", px , "," , py)
 	end
 	return ret or {x = px, y = py,tileType = "Wall" }
 end
@@ -308,10 +313,8 @@ function room_mt:FloodRoom()
 	floodingTiles = Stack:Create()
 	local start = self.Doors[1]
 	floodingTiles:push(start)
-	print("start Flood (",start.x,",",start.y,")")
 	while floodingTiles:getn() > 0  and loopAcc < room.AbortThreshold do
 		loopAcc = loopAcc + 1
-		print(loopAcc)
 		local current = floodingTiles:pop(1)
 		table.insert(floodedTiles,current)
 
@@ -341,7 +344,6 @@ function room_mt:FloodRoom()
 			end
 		end
 	end
-	print("endflood with " , #floodedTiles , " tile")
 	return floodedTiles
 end
 
@@ -358,8 +360,8 @@ function room_mt:getPixelPositions(px,py)
 end
 
 function room_mt:getRandomPositionInRoom()
-	local rx = math.ceil(lRandom(roomWidth - 2)) 
-	local ry = math.ceil(lRandom(roomHeight - 2))
+	local rx = math.ceil(lRandom(roomWidth - 2))  + 1
+	local ry = math.ceil(lRandom(roomHeight - 2)) + 1
 	return rx,ry
 end
 
