@@ -17,9 +17,10 @@ function gamegetDt(dt)
 	local diff = love.timer.getTime() - gameLastEnterRoom
 
 	G.MESSAGE_TO_DISPLAY = ""
+	G.SHAKE = 0
 	if diff < gamePauseOnNewRoom then
 		local nbtd = math.floor(gamePauseOnNewRoom - diff + 1)
-		G.MESSAGE_TO_DISPLAY = "Moving in " .. tostring(nbtd)
+		G.MESSAGE_TO_DISPLAY = tostring(nbtd)
 
 		return 0
 	end
@@ -28,6 +29,8 @@ function gamegetDt(dt)
 	if diff > gameSlowDuration then
 		return dt
 	end
+	G.MESSAGE_TO_DISPLAY = "!!! SKOLL !!!"
+	G.SHAKE = math.sin(diff * 70) * .3
 	local ratio = diff / gameSlowDuration
 	ratio = GetBias(ratio,.112)
 	return dt * ratio

@@ -20,6 +20,7 @@ function brolaf.new(options)
 	self.timeHyperKill = 0
 	self.positionHPUI = { x = 544, y = 64 }
 	self.positionBONUSUI = { x = 544, y = 96 }
+	self.positionMSGCENTER = { x = 237, y = 124 }
 
 	self.currentDrawDirection = "down"
 
@@ -174,6 +175,11 @@ function brolaf_mt:draw()
 	love.graphics.draw("Viking_idle_"..drawWord, math.floor(self.position.x), math.floor(self.position.y), 0, 1, 1, 16,32)
 	love.graphics.print("HP "..self.hp, self.positionHPUI.x, self.positionHPUI.y)
 	love.graphics.print("BONUS "..self.timeHyperKill, self.positionBONUSUI.x, self.positionBONUSUI.y)
+	
+	local offsetx = font:getWidth(G.MESSAGE_TO_DISPLAY) / 2
+	local offsety = font:getHeight() /2
+	local shake = G.SHAKE
+	love.graphics.print(G.MESSAGE_TO_DISPLAY, self.positionMSGCENTER.x ,self.positionMSGCENTER.y,G.SHAKE,3,3,offsetx,offsety)
 end
 
 function brolaf_mt:takeDamage( damage )
