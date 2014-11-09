@@ -291,7 +291,7 @@ function room_mt:CheckRoomIntegrity()
 	end
 
 	for i= 1 , nbEnemy do
-		local ep = self:getTileFromSelection(floodList)
+		local ep = self:getTileFromSelection(floodList , 2)
 		self:CreateEnemyAtPosition(ep)
 		table.remove(floodList,table.find(floodList,ep))
 	end
@@ -373,8 +373,10 @@ function room_mt:getTileFromSelection(selection,margin)
 	while not found do
 		ri = math.ceil(lRandom(#selection))
 		found = selection[ri].tileType ~= "Door"
+		found = found and selection[ri].x > margin and selection[ri].y > margin
+		found = found and selection[ri].x < (roomWidth - margin) and selection[ri].y < (roomHeight -margin)
 	end
-	return selection[ri]
+	return selection[ri] 
 end
 
 function room_mt:addRandomEnemies(nb)
