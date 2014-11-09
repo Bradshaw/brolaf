@@ -180,7 +180,7 @@ function enemy_mt:draw()
 	local acTime = love.timer.getTime() - self.timeStampHitSprite
 	local prefix = (acTime < 0.2) and self.typeEnemy.attack
 	if prefix then
-		love.graphics.draw(prefix..drawWord, self.position.x+math.sin(love.timer.getTime()*320)*vib, self.position.y+math.sin(love.timer.getTime()*150)*vib,0,1,1,16,32)	
+		love.graphics.draw(prefix..self.currentDrawDirection, self.position.x+math.sin(love.timer.getTime()*320)*vib, self.position.y+math.sin(love.timer.getTime()*150)*vib,0,1,1,16,32)	
 	elseif not self.isMoving then
 		love.graphics.draw(self.typeEnemy.idle..drawWord, self.position.x+math.sin(love.timer.getTime()*320)*vib, self.position.y+math.sin(love.timer.getTime()*150)*vib,0,1,1,16,32)
 	else
