@@ -7,6 +7,7 @@ local enemiesDescriptor = {
 	skeleton = {
 		idle = "draugr_idle_",
 		move = "draugr_move_",
+		attack ="draugr_attack_",
 		hp = 2,
 		speed = 50,
 		damage = 1,
@@ -34,9 +35,11 @@ function enemy.new(options)
 
 	self.position = options.position or vec2.new(250, 250)
 	self.typeEnemy = enemiesDescriptor[options.typeEnemy or "skeleton"]
+	self.typeEnemyName = options.typeEnemy or "skeleton"
 	self.currentTimerHit = 0
 	self.hp = self.typeEnemy.hp
 	self.isMoving = false
+	self.timeStampHitSprite = -1000
 
 	if self.typeEnemy.timeBeforeCharge then
 		self.currentTimerBeforeCharge = love.math.random() * self.typeEnemy.timeBeforeCharge;
@@ -146,7 +149,11 @@ function enemy_mt:hit( dt )
 		if self.currentTimerHit >= self.typeEnemy.rateDamage then
 			brolaf.takeDamage(self.typeEnemy.damage)
 			self.currentTimerHit = 0
+			if self.typeEnemyName == "skeleton" then
+				self.timeStampHitSprite = love.timer.getTime()
+			end
 		end
+
 		return true
 	end
 	return false
@@ -170,7 +177,11 @@ function enemy_mt:draw()
 		end
 	end
 
-	if not self.isMoving then
+	local acTime = love.timer.getTime() - self.timeStampHitSprite
+	local prefix = (acTime < 0.2) and self.typeEnemy.attack
+	if prefix then
+		love.graphics.draw(prefix..drawWord, self.position.x+math.sin(love.timer.getTime()*320)*vib, self.position.y+math.sin(love.timer.getTime()*150)*vib,0,1,1,16,32)	
+	elseif not self.isMoving then
 		love.graphics.draw(self.typeEnemy.idle..drawWord, self.position.x+math.sin(love.timer.getTime()*320)*vib, self.position.y+math.sin(love.timer.getTime()*150)*vib,0,1,1,16,32)
 	else
 		love.graphics.draw("ani_"..self.typeEnemy.move..self.currentDrawDirection, self.position.x+math.sin(love.timer.getTime()*320)*vib, self.position.y+math.sin(love.timer.getTime()*150)*vib,0,1,1,16,32)
