@@ -34,11 +34,11 @@ function brolaf.new(options)
 	self.damage = 1
 	self.rangeDamage = 40
 	self.rateDamage = 0.1
-	self.currentTimerHit = self.rateDamage
+	self.currentTimerHit = 0
 	self.currentDirection = vec2.new(0, 0)
 	self.rangeTakeItem = 15
 	self.timeHyperKill = 0
-	self.positionHPUI = { x = 532, y = 48 }
+	self.positionHPUI = { x = 528, y = 48 }
 	self.offsetHPUI   = { x = 16, y = 0 }
 	self.positionBONUSUI = { x = 544, y = 80 }
 	self.positionMSGCENTER = { x = 237, y = 124 }
@@ -227,9 +227,9 @@ function brolaf_mt:draw()
 	indexHP = 0
 	while indexHP < self.totalHp do
 		if indexHP < self.hp then
-			love.graphics.draw("Life_full", self.positionHPUI.x + self.offsetHPUI.x * indexHP, self.positionHPUI.y + self.offsetHPUI.y * indexHP, 0, 0.2, 0.2, 16,32)
+			love.graphics.draw("Life_full", self.positionHPUI.x + self.offsetHPUI.x * indexHP, self.positionHPUI.y + self.offsetHPUI.y * indexHP)
 		else
-			love.graphics.draw("Life_empty", self.positionHPUI.x + self.offsetHPUI.x * indexHP, self.positionHPUI.y + self.offsetHPUI.y * indexHP, 0, 0.2, 0.2, 16,32)
+			love.graphics.draw("Life_empty", self.positionHPUI.x + self.offsetHPUI.x * indexHP, self.positionHPUI.y + self.offsetHPUI.y * indexHP)
 		end
 		indexHP = indexHP + 1
 	end
@@ -243,7 +243,7 @@ function brolaf_mt:draw()
 	local shake = G.SHAKE
 	love.graphics.print(G.MESSAGE_TO_DISPLAY, self.positionMSGCENTER.x ,self.positionMSGCENTER.y,G.SHAKE,3,3,offsetx,offsety)
 
-	if math.ceil((1-self.attackCool)*6)>0 and math.ceil((1-self.attackCool)*6)<7 then
+	if self.attackCool ~= 0 and math.ceil((1-self.attackCool)*6)>0 and math.ceil((1-self.attackCool)*6)<7 then
 		local anim = math.ceil((1-self.attackCool)*6)
 		local attRot = ({
 			left = math.pi/2,
@@ -259,9 +259,8 @@ function brolaf_mt:takeDamage( damage )
 	self.hp = self.hp - damage
 	if self.hp <= 0 then
 		self.hp = 0
-		print ("Dead")
-		menu = require("menu")
-		gstate.switch(menu)
+		gameover = require("gameover")
+		gstate.switch(gameover)
 	end
 end
 

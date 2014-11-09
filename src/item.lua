@@ -67,12 +67,6 @@ end
 
 function item_mt:draw()
 	love.graphics.draw(self.typeitemname,self.position.x,self.position.y,0,1,1,16,32)
-	--[[
-	r, g, b, a = love.graphics.getColor()
-	love.graphics.setColor(0, 255, 0, 255)
-	love.graphics.circle("fill", self.position.x, self.position.y, 4)
-	love.graphics.setColor(r, g, b, a)
-	--]]
 end
 
 function item_mt:pickUp( hero )
