@@ -11,6 +11,9 @@ function love.load(arg)
 	local vr = love.graphics.getHeight()/360
 	G.SCALE = math.floor(math.min(hr,vr))
 
+	font = love.graphics.newFont("8bit.ttf")
+	love.graphics.setFont(font)
+
 
  	fudge = require("fudge")
  	sprites = fudge.new("Assets",{
