@@ -26,8 +26,11 @@ function enemy.new(options)
 	local self = setmetatable({}, {__index=enemy_mt})
 	local options = options or {}
 
+	self.currentDrawDirection = ({"left","right","up","down"})[math.random(1,4)]
+
 	self.position = options.position or vec2.new(250, 250)
 	self.typeEnemy = enemiesDescriptor[options.typeEnemy or "skeleton"]
+	self.typeEnemyName = options.typeEnemy or "skeleton"
 	self.currentTimerHit = 0
 	self.hp = self.typeEnemy.hp
 
@@ -103,6 +106,17 @@ function enemy_mt:update( dt )
 				if room and room.cur:IsPathWalkablePixel(newPosition) then
 					self.position = newPosition
 				end
+
+				if directionMovement.x<-0.1 then
+					self.currentDrawDirection="left"
+				elseif directionMovement.x>0.1 then
+					self.currentDrawDirection="right"
+				elseif directionMovement.y<-0.1 then
+					self.currentDrawDirection="up"
+				elseif directionMovement.y>0.1 then
+					self.currentDrawDirection="down"
+				end
+
 			end
 		end
 	end
@@ -121,10 +135,19 @@ function enemy_mt:hit( dt )
 end
 
 function enemy_mt:draw()
-	r, g, b, a = love.graphics.getColor()
-	love.graphics.setColor(0, 0, 255, 255)
-	love.graphics.circle("fill", self.position.x, self.position.y, 4)
-	love.graphics.setColor(r, g, b, a)
+	local drawWord = (self.typeEnemyName=="skeleton" and "draugr_idle_" or "Sangliours_idle_")..({
+		left = "left",
+		right = "right",
+		up = "back",
+		down = "front"
+	})[self.currentDrawDirection];
+
+	love.graphics.draw(drawWord,self.position.x, self.position.y,0,1,1,16,32)
+
+	--r, g, b, a = love.graphics.getColor()
+	--love.graphics.setColor(0, 0, 255, 255)
+	--love.graphics.circle("fill", self.position.x, self.position.y, 4)
+	--love.graphics.setColor(r, g, b, a)
 end
 
 function enemy_mt:takeDamage( damage )
