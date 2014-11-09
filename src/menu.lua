@@ -14,6 +14,10 @@ local TimerNotDisplayPlay = 0.5
 local CurrentTimerDisplayPlay = 0
 local CurrentTimer = 0
 
+local lastBlast = -1
+local shake = 0
+local shakeamt = 10
+
 
 function state:init()
 end
@@ -29,6 +33,11 @@ end
 
 
 function state:update(dt)
+	shake = shake - shake * dt*3
+	if math.floor(CurrentTimer)>lastBlast and CurrentTimer<=TitlePlayTexture.startTime+1 then
+		lastBlast = CurrentTimer
+		shake = 1
+	end
 	CurrentTimer = CurrentTimer + dt
 	CurrentTimerDisplayPlay = CurrentTimerDisplayPlay + dt
 	if CurrentTimerDisplayPlay > TimerDisplayPlay + TimerNotDisplayPlay then
@@ -44,6 +53,11 @@ function state:draw()
 
 	-- Do drawing between here...
 	--love.graphics.rectangle("fill",0,0,640,360)
+	love.graphics.translate(
+		shakeamt*math.sin(love.timer.getTime()*23)*shake,
+		shakeamt*math.sin(love.timer.getTime()*33)*shake
+	)
+
 	for i,v in ipairs(TitleMenuTextures) do
 		if v.startTime < CurrentTimer then
 			love.graphics.draw(v.name, v.position.x, v.position.y)
