@@ -38,7 +38,7 @@ function brolaf.new(options)
 	self.currentDirection = vec2.new(0, 0)
 	self.rangeTakeItem = 15
 	self.timeHyperKill = 0
-	self.positionHPUI = { x = 532, y = 48 }
+	self.positionHPUI = { x = 528, y = 48 }
 	self.offsetHPUI   = { x = 16, y = 0 }
 	self.positionBONUSUI = { x = 544, y = 80 }
 	self.positionMSGCENTER = { x = 237, y = 124 }
@@ -227,9 +227,9 @@ function brolaf_mt:draw()
 	indexHP = 0
 	while indexHP < self.totalHp do
 		if indexHP < self.hp then
-			love.graphics.draw("Life_full", self.positionHPUI.x + self.offsetHPUI.x * indexHP, self.positionHPUI.y + self.offsetHPUI.y * indexHP, 0, 0.2, 0.2, 16,32)
+			love.graphics.draw("Life_full", self.positionHPUI.x + self.offsetHPUI.x * indexHP, self.positionHPUI.y + self.offsetHPUI.y * indexHP)
 		else
-			love.graphics.draw("Life_empty", self.positionHPUI.x + self.offsetHPUI.x * indexHP, self.positionHPUI.y + self.offsetHPUI.y * indexHP, 0, 0.2, 0.2, 16,32)
+			love.graphics.draw("Life_empty", self.positionHPUI.x + self.offsetHPUI.x * indexHP, self.positionHPUI.y + self.offsetHPUI.y * indexHP)
 		end
 		indexHP = indexHP + 1
 	end
