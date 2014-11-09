@@ -8,6 +8,8 @@ function brolaf.new(options)
 	local options = options or {}
 	self.position = options.position or vec2.new(4.5*32, 4.5*32)
 
+	self.attackCool = 0
+
 	self.speed = 100
 	self.totalHp = 5
 	self.hp = self.totalHp
@@ -147,6 +149,7 @@ function brolaf_mt:update( dt )
 		(self.joystick and (self.joystick:isGamepadDown("a", "b", "x", "y", "leftshoulder","rightshoulder") or
 		useful.dead(self.joystick:getGamepadAxis("triggerleft")) > 0 or useful.dead(self.joystick:getGamepadAxis("triggerright")) > 0)))
 		and self.currentTimerHit >= self.rateDamage then
+			self.attackCool = 1
 			enemyClosest = enemy.findClosest(self.position, self.rangeDamage, self.currentDirection)
 			if enemyClosest then
 				if self.timeHyperKill > 0 then
@@ -157,7 +160,7 @@ function brolaf_mt:update( dt )
 				self.currentTimerHit = 0
 			end
 	end
-
+	self.attackCool = self.attackCool - dt * 10
 	-- Check items
 	itemClosest = item.findClosest(self.position, self.rangeTakeItem)
 	if itemClosest then
@@ -175,11 +178,23 @@ function brolaf_mt:draw()
 	love.graphics.draw("Viking_idle_"..drawWord, math.floor(self.position.x), math.floor(self.position.y), 0, 1, 1, 16,32)
 	love.graphics.print("HP "..self.hp, self.positionHPUI.x, self.positionHPUI.y)
 	love.graphics.print("BONUS "..self.timeHyperKill, self.positionBONUSUI.x, self.positionBONUSUI.y)
+
 	
 	local offsetx = font:getWidth(G.MESSAGE_TO_DISPLAY) / 2
 	local offsety = font:getHeight() /2
 	local shake = G.SHAKE
 	love.graphics.print(G.MESSAGE_TO_DISPLAY, self.positionMSGCENTER.x ,self.positionMSGCENTER.y,G.SHAKE,3,3,offsetx,offsety)
+
+	if math.ceil((1-self.attackCool)*6)>0 and math.ceil((1-self.attackCool)*6)<7 then
+		local anim = math.ceil((1-self.attackCool)*6)
+		local attRot = ({
+			left = math.pi/2,
+			right = -math.pi/2,
+			up = math.pi,
+			down = 0
+		})[self.currentDrawDirection];
+		love.graphics.draw("Swoosh_viking_"..anim,math.floor(self.position.x), math.floor(self.position.y)-16,attRot,1,1,20,-5)
+	end
 end
 
 function brolaf_mt:takeDamage( damage )

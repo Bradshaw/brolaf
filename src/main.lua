@@ -16,7 +16,6 @@ function love.load(arg)
 	font = love.graphics.newFont("Romulus.ttf", 16)
 	love.graphics.setFont(font)
 
-
  	fudge = require("fudge")
  	sprites = fudge.new("Assets",{
  		npot = true,
@@ -26,6 +25,9 @@ function love.load(arg)
  		monkey = true,
  	})
  	sprites.image:setFilter("nearest","nearest")
+
+
+ 	sprites:chopToAnimation("Swoosh_viking",6)
 
  	screenCanvas = love.graphics.newCanvas(640,360)
  	screenCanvas:setFilter("nearest","nearest")
