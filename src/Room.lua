@@ -74,6 +74,7 @@ function room.new(options)
 	if not options.noReplace then
 		room.cur = self
 	end
+	gameLastEnterRoom = love.timer.getTime()
 	return self
 end
 

@@ -6,7 +6,7 @@ enemyTypes = {"skeleton", "boar"}
 local enemiesDescriptor = {
 	skeleton = {
 		hp = 2,
-		speed = 130,
+		speed = 50,
 		damage = 1,
 		rangeDamage = 30,
 		rateDamage = 0.4,
@@ -18,7 +18,7 @@ local enemiesDescriptor = {
 		damage = 2,
 		rangeDamage = 30,
 		rateDamage = 0.4,
-		timeBeforeCharge = 2
+		timeBeforeCharge = 1
 	}
 }
 
