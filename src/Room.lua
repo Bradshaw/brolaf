@@ -409,7 +409,8 @@ function room_mt:getTileFromSelection(selection,margin)
 		found = found and selection[ri].x > margin and selection[ri].y > margin
 		found = found and selection[ri].x < (roomWidth - margin) and selection[ri].y < (roomHeight -margin)
 	end
-	return selection[ri] 
+	local pos = selection[ri]
+	return pos
 end
 
 function room_mt:addRandomEnemies(nb)
@@ -435,7 +436,8 @@ end
 
 function room_mt:CreateItemAtPosition(infos)
 	local x,y = self:getPixelPositions(infos.x,infos.y)
-
+	x = x + 8
+	y = y + 24
 	local itemType = itemTypes[math.ceil(lRandom(#itemTypes))]
 
 	item.new({
