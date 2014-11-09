@@ -22,6 +22,7 @@ function gamegetDt(dt)
 end
 
 function state:enter( pre )
+	room.numberRoomsGenerate = 0
 	room.new({noReplace = false})
 end
 
