@@ -3,9 +3,25 @@ local state = {}
 function state:init()
 end
 
+gameLastEnterRoom = 0
+gameSlowDuration = 2
+GlobalTimeFactor = .5
+
+function GetBias(time,bias)
+	return (time / ((((1.0/bias) - 2.0)*(1.0 - time))+1.0));
+end
+
+function gamegetDt(dt)
+	local diff = love.timer.getTime() - gameLastEnterRoom
+	if diff > gameSlowDuration then
+		return dt
+	end
+	local ratio = diff / gameSlowDuration
+	ratio = GetBias(ratio,.112)
+	return dt * ratio
+end
 
 function state:enter( pre )
-	brolaf.new({noReplace = false}) -- TO remove at the last
 	room.new({noReplace = false})
 end
 
@@ -15,7 +31,7 @@ end
 
 
 function state:update(dt)
-	local rdt = dt
+	local rdt = gamegetDt(dt) * GlobalTimeFactor
 	brolaf.update(rdt)
 	enemy.update(rdt)
 	item.update(rdt)
@@ -28,7 +44,7 @@ function state:draw()
 
 
 	-- Do drawing between here...
-	love.graphics.rectangle("fill",0,0,640,360)
+	--love.graphics.rectangle("fill",0,0,640,360)
 	room.draw()
 	brolaf.draw()
 	enemy.draw()
