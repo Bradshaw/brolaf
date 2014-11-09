@@ -215,6 +215,8 @@ end
 
 function room_mt:PlaceFourDoors()
 	self.Doors = {}
+
+	-- UP
 	local rx = math.ceil(lRandom(roomWidth - 2)) + 1
 	local door = {x = rx, y = 1, tileType = "Door"}
 	self:SetTileInfos(door)
@@ -222,6 +224,7 @@ function room_mt:PlaceFourDoors()
 	displayTi(door)
 	self:SetTileInfos({x = rx, y = 2, tileType = "Floor"})
 
+	--DOWN
 	rx = math.ceil(lRandom(roomWidth - 2)) + 1
 	door = {x = rx, y = roomHeight, tileType = "Door"}
 	self:SetTileInfos(door)
@@ -229,6 +232,7 @@ function room_mt:PlaceFourDoors()
 	displayTi(door)
 	self:SetTileInfos({x = rx, y = roomHeight - 1, tileType = "Floor"})
 
+	--LEFT
 	local ry = math.ceil(lRandom(roomHeight - 2)) + 1
 	door = {x = 1, y = ry, tileType = "Door"}
 	self:SetTileInfos(door)
@@ -236,6 +240,7 @@ function room_mt:PlaceFourDoors()
 	displayTi(door)
 	self:SetTileInfos({x = 2, y = ry , tileType = "Floor"})
 	
+	--RIGHT
 	ry = math.ceil(lRandom(roomHeight - 2)) + 1
 	door = {x = roomWidth, y = ry, tileType = "Door"}
 	self:SetTileInfos(door)
