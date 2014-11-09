@@ -20,7 +20,8 @@ function brolaf.new(options)
 	self.currentDirection = vec2.new(0, 0)
 	self.rangeTakeItem = 15
 	self.timeHyperKill = 0
-	self.positionHPUI = { x = 544, y = 64 }
+	self.positionHPUI = { x = 532, y = 48 }
+	self.offsetHPUI   = { x = 16, y = 0 }
 	self.positionBONUSUI = { x = 544, y = 80 }
 	self.positionMSGCENTER = { x = 237, y = 124 }
 	self.positionKILLUI = { x = 544, y = 96 }
@@ -188,7 +189,18 @@ function brolaf_mt:draw()
 		print ("self.currentDrawDirection "..self.currentDrawDirection)
 		love.graphics.draw("ani_".."Viking_move_"..self.currentDrawDirection, math.floor(self.position.x), math.floor(self.position.y), 0, 1, 1, 16,32)
 	end
-	love.graphics.print("HP "..self.hp, self.positionHPUI.x, self.positionHPUI.y)
+
+	indexHP = 0
+	while indexHP < self.totalHp do
+		if indexHP < self.hp then
+			love.graphics.draw("Life_full", self.positionHPUI.x + self.offsetHPUI.x * indexHP, self.positionHPUI.y + self.offsetHPUI.y * indexHP, 0, 0.2, 0.2, 16,32)
+		else
+			love.graphics.draw("Life_empty", self.positionHPUI.x + self.offsetHPUI.x * indexHP, self.positionHPUI.y + self.offsetHPUI.y * indexHP, 0, 0.2, 0.2, 16,32)
+		end
+		indexHP = indexHP + 1
+	end
+
+	--love.graphics.print("HP "..self.hp, self.positionHPUI.x, self.positionHPUI.y)
 	love.graphics.print("BONUS "..math.floor(self.timeHyperKill), self.positionBONUSUI.x, self.positionBONUSUI.y)
 	love.graphics.print("Kill "..self.numberEnemiesKill, self.positionKILLUI.x, self.positionKILLUI.y)
 	
