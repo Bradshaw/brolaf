@@ -25,6 +25,14 @@ end
 
 function state:enter( pre )
 	brolaf.new({noReplace = false})
+	TimerDisplayPlay = 0.75
+	TimerNotDisplayPlay = 0.5
+	CurrentTimerDisplayPlay = 0
+	CurrentTimer = 0
+
+	lastBlast = -1
+	shake = 0
+	shakeamt = 10
 end
 
 
@@ -60,7 +68,10 @@ function state:draw()
 
 	for i,v in ipairs(TitleMenuTextures) do
 		if v.startTime < CurrentTimer then
-			love.graphics.draw(v.name, v.position.x, v.position.y)
+			if v.startTime~=1.5 or
+				(math.sin(love.timer.getTime()*30)*math.sin(love.timer.getTime())*math.sin(love.timer.getTime()*0.3))<0.7 then
+				love.graphics.draw(v.name, v.position.x, v.position.y)
+			end
 		end
 	end
 	if TitlePlayTexture.startTime < CurrentTimer and CurrentTimerDisplayPlay < TimerDisplayPlay then
@@ -95,7 +106,7 @@ function state:keypressed(key, isRepeat)
 	if key=='escape' then
 		love.event.push('quit')
 	end
-	if key=='return' then
+	if key=='return' or key==' ' then
 		game = require("game")
 		gstate.switch(game)
 	end

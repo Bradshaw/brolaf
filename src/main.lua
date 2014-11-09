@@ -3,6 +3,8 @@ require("Stack")
 
 G = {
 	TILE_SIZE = 32,
+	MESSAGE_TO_DISPLAY ="",
+	SHAKE = 0,
 }
 
 function love.load(arg)
@@ -14,7 +16,6 @@ function love.load(arg)
 	font = love.graphics.newFont("Romulus.ttf", 16)
 	love.graphics.setFont(font)
 
-
  	fudge = require("fudge")
  	sprites = fudge.new("Assets",{
  		npot = true,
@@ -24,6 +25,16 @@ function love.load(arg)
  		monkey = true,
  	})
  	sprites.image:setFilter("nearest","nearest")
+
+ 	kludgedraw = love.graphics.draw
+
+	love.graphics.draw = function(dr, x, y, ...)
+		kludgedraw(dr, math.floor(x),math.floor(y),...)
+	end
+
+
+
+ 	sprites:chopToAnimation("Swoosh_viking",6)
 
  	screenCanvas = love.graphics.newCanvas(640,360)
  	screenCanvas:setFilter("nearest","nearest")
