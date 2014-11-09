@@ -3,6 +3,7 @@ require("Stack")
 
 G = {
 	TILE_SIZE = 32,
+	MESSAGE_TO_DISPLAY ="",
 }
 
 function love.load(arg)

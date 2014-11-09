@@ -4,8 +4,10 @@ function state:init()
 end
 
 gameLastEnterRoom = 0
-gameSlowDuration = 2
+gamePauseOnNewRoom = 3
+gameSlowDuration = .5
 GlobalTimeFactor = .5
+
 
 function GetBias(time,bias)
 	return (time / ((((1.0/bias) - 2.0)*(1.0 - time))+1.0));
@@ -13,6 +15,16 @@ end
 
 function gamegetDt(dt)
 	local diff = love.timer.getTime() - gameLastEnterRoom
+
+	G.MESSAGE_TO_DISPLAY = ""
+	if diff < gamePauseOnNewRoom then
+		local nbtd = math.floor(gamePauseOnNewRoom - diff + 1)
+		G.MESSAGE_TO_DISPLAY = "Moving in " .. tostring(nbtd)
+
+		return 0
+	end
+	diff = diff - gamePauseOnNewRoom
+
 	if diff > gameSlowDuration then
 		return dt
 	end
