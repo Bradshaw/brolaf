@@ -2,6 +2,24 @@ local brolaf_mt = {}
 brolaf = {}
 brolaf.cur = nil
 
+local screams = {
+	"ARG",
+	"BWA",
+	"GR",
+	"AAA",
+	"yolo",
+	"HAHA"
+}
+
+function lolscream()
+	local str = ""
+	while str:len()<15 do
+		str = str..screams[math.random(1,#screams)]
+	end
+
+	return str.."!!"
+end
+
 function brolaf.new(options)
 	local self = setmetatable({}, {__index=brolaf_mt})
 
@@ -9,7 +27,7 @@ function brolaf.new(options)
 	self.position = options.position or vec2.new(8.5*32, 5.5*32)
 
 	self.attackCool = 0
-
+	self.scream = lolscream()
 	self.speed = 100
 	self.totalHp = 5
 	self.hp = self.totalHp
@@ -27,6 +45,8 @@ function brolaf.new(options)
 	self.positionKILLUI = { x = 544, y = 96 }
 	self.numberEnemiesKill = 0
 	self.isMoving = false
+	self.timerBeerDisplay = 1
+	self.currentTimeBeerDisplay = 0
 
 	self.currentDrawDirection = "down"
 
@@ -74,6 +94,11 @@ function brolaf.addTimeHyperKill( timeHyperKill )
 end
 
 function brolaf_mt:update( dt )
+	self.screamtime = (self.screamtime or 1) - dt
+	if self.screamtime<= 0 then
+		self.scream = lolscream()
+		self.screamtime = math.random()*2
+	end
 	if room then
 		-- Movement
 		currentDirection = vec2.new(0, 0)
@@ -169,12 +194,15 @@ function brolaf_mt:update( dt )
 			end
 	end
 	self.attackCool = self.attackCool - dt * 10
+
 	-- Check items
+	self.currentTimeBeerDisplay = self.currentTimeBeerDisplay - dt
 	itemClosest = item.findClosest(self.position, self.rangeTakeItem)
 	if itemClosest then
 		itemClosest:pickUp(self)
 	end
 end
+
 
 function brolaf_mt:draw()
 	local drawWord = ({
@@ -186,8 +214,14 @@ function brolaf_mt:draw()
 	if not self.isMoving then
 		love.graphics.draw("Viking_idle_"..drawWord, math.floor(self.position.x), math.floor(self.position.y), 0, 1, 1, 16,32)
 	else
-		print ("self.currentDrawDirection "..self.currentDrawDirection)
 		love.graphics.draw("ani_".."Viking_move_"..self.currentDrawDirection, math.floor(self.position.x), math.floor(self.position.y), 0, 1, 1, 16,32)
+	end
+	if self.timeHyperKill > 0 then
+		love.graphics.print(self.scream,self.position.x-font:getWidth(self.scream)/2,self.position.y-42)
+	else
+		if self.currentTimeBeerDisplay > 0 then
+			love.graphics.print("I FEEL BETTER!!",self.position.x-font:getWidth("I FEEL BETTER!!")/2,self.position.y-42)
+		end
 	end
 
 	indexHP = 0
@@ -233,6 +267,7 @@ end
 
 function brolaf_mt:addHP( hp )
 	self.hp = self.hp + hp
+	self.currentTimeBeerDisplay = self.timerBeerDisplay
 	if self.hp > self.totalHp then
 		self.hp = self.totalHp
 	end

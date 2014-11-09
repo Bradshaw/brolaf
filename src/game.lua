@@ -25,7 +25,7 @@ function gamegetDt(dt)
 		gamePauseOnNewRoom = numberDifficulty[index].timerPause
 		index = index + 1
 	until index > #numberDifficulty or not (numberDifficulty[index].startNumberLevel < room.numberRoomsGenerate)
-
+	
 	if diff < gamePauseOnNewRoom then
 		local nbtd = math.floor(gamePauseOnNewRoom - diff + 1)
 		G.MESSAGE_TO_DISPLAY = tostring(nbtd)
@@ -56,9 +56,11 @@ end
 
 function state:update(dt)
 	local rdt = gamegetDt(dt) * GlobalTimeFactor
-	brolaf.update(rdt)
-	enemy.update(rdt)
-	item.update(rdt)
+	if rdt~= 0 then
+		brolaf.update(rdt)
+		enemy.update(rdt)
+		item.update(rdt)
+	end
 end
 
 

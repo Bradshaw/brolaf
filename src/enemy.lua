@@ -5,6 +5,8 @@ enemy.all = {}
 enemyTypes = {"skeleton", "boar"}
 local enemiesDescriptor = {
 	skeleton = {
+		idle = "draugr_idle_",
+		move = "draugr_move_",
 		hp = 2,
 		speed = 50,
 		damage = 1,
@@ -13,6 +15,8 @@ local enemiesDescriptor = {
 		timeBeforeHit = 20
 	},
 	boar = {
+		idle = "Sangliours_idle_",
+		move = "Sangliours_move_",
 		hp = 4,
 		speed = 200,
 		damage = 2,
@@ -30,9 +34,9 @@ function enemy.new(options)
 
 	self.position = options.position or vec2.new(250, 250)
 	self.typeEnemy = enemiesDescriptor[options.typeEnemy or "skeleton"]
-	self.typeEnemyName = options.typeEnemy or "skeleton"
 	self.currentTimerHit = 0
 	self.hp = self.typeEnemy.hp
+	self.isMoving = false
 
 	if self.typeEnemy.timeBeforeCharge then
 		self.currentTimerBeforeCharge = love.math.random() * self.typeEnemy.timeBeforeCharge;
@@ -83,6 +87,7 @@ function enemy.draw(  )
 end
 
 function enemy_mt:update( dt )
+	self.isMoving = false
 	if self.typeEnemy.timeBeforeCharge then
 		self.currentTimerHit = self.currentTimerHit + dt
 		if self.currentTimerBeforeCharge < self.typeEnemy.timeBeforeCharge then
@@ -106,6 +111,7 @@ function enemy_mt:update( dt )
 			end
 			if room and room.cur:IsPathWalkablePixel(newPosition) and not self:hit(dt) then
 				self.position = newPosition
+				self.isMoving = true
 			else
 				self.currentTimerBeforeCharge = 0
 			end
@@ -117,6 +123,7 @@ function enemy_mt:update( dt )
 				newPosition = self.position:add(directionMovement:mul(self.typeEnemy.speed * dt))
 				if room and room.cur:IsPathWalkablePixel(newPosition) then
 					self.position = newPosition
+					self.isMoving = true
 				end
 
 				if directionMovement.x<-0.5 then
@@ -128,7 +135,6 @@ function enemy_mt:update( dt )
 				elseif directionMovement.y>0.5 then
 					self.currentDrawDirection="down"
 				end
-
 			end
 		end
 	end
@@ -147,7 +153,7 @@ function enemy_mt:hit( dt )
 end
 
 function enemy_mt:draw()
-	local drawWord = (self.typeEnemyName=="skeleton" and "draugr_idle_" or "Sangliours_idle_")..({
+	local drawWord = ({
 		left = "left",
 		right = "right",
 		up = "back",
@@ -164,15 +170,14 @@ function enemy_mt:draw()
 		end
 	end
 
-	love.graphics.draw(drawWord,self.position.x+math.sin(love.timer.getTime()*320)*vib, self.position.y+math.sin(love.timer.getTime()*150)*vib,0,1,1,16,32)
+	if not self.isMoving then
+		love.graphics.draw(self.typeEnemy.idle..drawWord, self.position.x+math.sin(love.timer.getTime()*320)*vib, self.position.y+math.sin(love.timer.getTime()*150)*vib,0,1,1,16,32)
+	else
+		love.graphics.draw("ani_"..self.typeEnemy.move..self.currentDrawDirection, self.position.x+math.sin(love.timer.getTime()*320)*vib, self.position.y+math.sin(love.timer.getTime()*150)*vib,0,1,1,16,32)
+	end
 	if self.charging then
 		love.graphics.print("GRUIIIIK",self.position.x-font:getWidth("GRUIIIIK")/2,self.position.y-42)
 	end
-
-	--r, g, b, a = love.graphics.getColor()
-	--love.graphics.setColor(0, 0, 255, 255)
-	--love.graphics.circle("fill", self.position.x, self.position.y, 4)
-	--love.graphics.setColor(r, g, b, a)
 end
 
 function enemy_mt:takeDamage( damage )
