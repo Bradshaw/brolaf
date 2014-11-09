@@ -7,6 +7,8 @@ roomHeight = 10
 
 nbEnemy = 2
 
+positionCoordinateUI = { x = 544, y = 16 }
+
 lRandom = love.math.random
 
 local direction = {
@@ -98,6 +100,7 @@ function room_mt:draw()
 	for _,tile in ipairs(self.Tiles) do
 		tile:draw()
 	end
+	love.graphics.print("X "..self.WorldPosition.x.." Y "..self.WorldPosition.y, positionCoordinateUI.x, positionCoordinateUI.y)
 end
 
 function room_mt:CreatTiles()

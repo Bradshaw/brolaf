@@ -84,6 +84,7 @@ end
 
 function enemy_mt:update( dt )
 	if self.typeEnemy.timeBeforeCharge then
+		self.currentTimerHit = self.currentTimerHit + dt
 		if self.currentTimerBeforeCharge < self.typeEnemy.timeBeforeCharge then
 			self.currentTimerBeforeCharge = self.currentTimerBeforeCharge + dt
 			if self.currentTimerBeforeCharge >= self.typeEnemy.timeBeforeCharge then
@@ -91,9 +92,8 @@ function enemy_mt:update( dt )
 			end
 		else
 			newPosition = self.position:add(self.directionCharge:mul(self.typeEnemy.speed * dt))
-			if room and room.cur:IsPathWalkablePixel(newPosition) then
+			if room and room.cur:IsPathWalkablePixel(newPosition) and not self:hit(dt) then
 				self.position = newPosition
-				self:hit(dt)
 			else
 				self.currentTimerBeforeCharge = 0
 			end
@@ -124,7 +124,6 @@ end
 
 function enemy_mt:hit( dt )
 	if useful.isClosest(self.position, brolaf:position(), self.typeEnemy.rangeDamage) then
-		self.currentTimerHit = self.currentTimerHit + dt
 		if self.currentTimerHit >= self.typeEnemy.rateDamage then
 			brolaf.takeDamage(self.typeEnemy.damage)
 			self.currentTimerHit = 0
