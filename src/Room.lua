@@ -5,7 +5,7 @@ room.cur = nil
 roomWidth = 16
 roomHeight = 10
 
-nbEnemy = 3
+nbEnemy = 2
 
 lRandom = love.math.random
 
