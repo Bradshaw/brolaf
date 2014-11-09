@@ -183,7 +183,7 @@ function brolaf_mt:draw()
 	})[self.currentDrawDirection];
 	love.graphics.draw("Viking_idle_"..drawWord, math.floor(self.position.x), math.floor(self.position.y), 0, 1, 1, 16,32)
 	love.graphics.print("HP "..self.hp, self.positionHPUI.x, self.positionHPUI.y)
-	love.graphics.print("BONUS "..self.timeHyperKill, self.positionBONUSUI.x, self.positionBONUSUI.y)
+	love.graphics.print("BONUS "..math.floor(self.timeHyperKill), self.positionBONUSUI.x, self.positionBONUSUI.y)
 	love.graphics.print("Kill "..self.numberEnemiesKill, self.positionKILLUI.x, self.positionKILLUI.y)
 	
 	local offsetx = font:getWidth(G.MESSAGE_TO_DISPLAY) / 2
