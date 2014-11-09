@@ -1,5 +1,20 @@
 local state = {}
 
+local TitleMenuTextures =
+{
+	{ name = fudge.current:getPiece("ecran-titre_0005_Explosion"), 					position = { x =  95, y =   0 }, startTime = 3 },
+	{ name = fudge.current:getPiece("ecran-titre_0004_II"), 						position = { x = 217, y =  40 }, startTime = 2 },
+	{ name = fudge.current:getPiece("ecran-titre_0003_SHAPE"), 						position = { x = 126, y =  62 }, startTime = 1 },
+	{ name = fudge.current:getPiece("ecran-titre_0002_yeux"), 						position = { x = 304, y =  97 }, startTime = 1.5 },
+	{ name = fudge.current:getPiece("ecran-titre_0000_The-infinite--viking-quest"), position = { x = 175, y = 135 }, startTime = 0 },
+}
+local TitlePlayTexture = { name = fudge.current:getPiece("ecran-titre_0001_PLAY"), 	position = { x = 222, y = 298 }, startTime = 4 }
+local TimerDisplayPlay = 0.75
+local TimerNotDisplayPlay = 0.5
+local CurrentTimerDisplayPlay = 0
+local CurrentTimer = 0
+
+
 function state:init()
 end
 
@@ -14,6 +29,11 @@ end
 
 
 function state:update(dt)
+	CurrentTimer = CurrentTimer + dt
+	CurrentTimerDisplayPlay = CurrentTimerDisplayPlay + dt
+	if CurrentTimerDisplayPlay > TimerDisplayPlay + TimerNotDisplayPlay then
+		CurrentTimerDisplayPlay = 0
+	end
 end
 
 
@@ -23,7 +43,15 @@ function state:draw()
 
 
 	-- Do drawing between here...
-	love.graphics.rectangle("fill",0,0,640,360)
+	--love.graphics.rectangle("fill",0,0,640,360)
+	for i,v in ipairs(TitleMenuTextures) do
+		if v.startTime < CurrentTimer then
+			love.graphics.draw(v.name, v.position.x, v.position.y)
+		end
+	end
+	if TitlePlayTexture.startTime < CurrentTimer and CurrentTimerDisplayPlay < TimerDisplayPlay then
+		love.graphics.draw(TitlePlayTexture.name, TitlePlayTexture.position.x, TitlePlayTexture.position.y)
+	end
 
 	-- And here
 
