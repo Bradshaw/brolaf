@@ -8,6 +8,7 @@ G = {
 }
 
 function love.load(arg)
+	love.mouse.setVisible(false)
 
 	local hr = love.graphics.getWidth()/640
 	local vr = love.graphics.getHeight()/360
@@ -65,6 +66,8 @@ function love.load(arg)
 	require("tile")
 
 	gstate = require "gamestate"
+	game = require("game")
+	gameover = require("gameover")
 	menu = require("menu")
 	gstate.registerEvents()
 	gstate.switch(menu)

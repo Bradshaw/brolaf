@@ -103,10 +103,13 @@ function brolaf_mt:update( dt )
 		-- Movement
 		currentDirection = vec2.new(0, 0)
 		self.isMoving = false
+		local xax = self.joystick:getGamepadAxis("leftx") + self.joystick:getGamepadAxis("rightx")
+		local yax = self.joystick:getGamepadAxis("lefty") + self.joystick:getGamepadAxis("righty")
+
 		-- Left
 		if ((not self.joystick and love.keyboard.isDown("left", "q", "a"))
 			or
-			(self.joystick and (self.joystick:isGamepadDown("dpleft") or useful.dead(self.joystick:getGamepadAxis("leftx")) < 0)))
+			(self.joystick and (self.joystick:isGamepadDown("dpleft") or useful.dead(xax) < 0)))
 			then
 				tempNewPosition = self.position:add(vec2.new(-self.speed * dt, 0))
 				self.currentDrawDirection="left"
@@ -120,7 +123,7 @@ function brolaf_mt:update( dt )
 		-- Right
 		if ((not self.joystick and love.keyboard.isDown("right", "d"))
 			or
-			(self.joystick and (self.joystick:isGamepadDown("dpright") or useful.dead(self.joystick:getGamepadAxis("leftx")) > 0)))
+			(self.joystick and (self.joystick:isGamepadDown("dpright") or useful.dead(xax) > 0)))
 			then
 				tempNewPosition = self.position:add(vec2.new(self.speed * dt, 0))
 				self.currentDrawDirection="right"
@@ -134,7 +137,7 @@ function brolaf_mt:update( dt )
 		-- Down
 		if ((not self.joystick and love.keyboard.isDown("down", "s"))
 			or
-			(self.joystick and (self.joystick:isGamepadDown("dpdown") or useful.dead(self.joystick:getGamepadAxis("lefty")) > 0)))
+			(self.joystick and (self.joystick:isGamepadDown("dpdown") or useful.dead(yax) > 0)))
 			then
 				tempNewPosition = self.position:add(vec2.new(0, self.speed * dt))
 				self.currentDrawDirection="down"
@@ -148,7 +151,7 @@ function brolaf_mt:update( dt )
 		-- Up
 		if ((not self.joystick and love.keyboard.isDown("up", "z", "w"))
 			or
-			(self.joystick and (self.joystick:isGamepadDown("dpup") or useful.dead(self.joystick:getGamepadAxis("lefty")) < 0)))
+			(self.joystick and (self.joystick:isGamepadDown("dpup") or useful.dead(yax) < 0)))
 			then
 				tempNewPosition = self.position:add(vec2.new(0, -self.speed * dt))
 				self.currentDrawDirection="up"
@@ -259,7 +262,6 @@ function brolaf_mt:takeDamage( damage )
 	self.hp = self.hp - damage
 	if self.hp <= 0 then
 		self.hp = 0
-		gameover = require("gameover")
 		gstate.switch(gameover)
 	end
 end

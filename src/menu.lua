@@ -156,7 +156,6 @@ end
 function state:gamepadpressed(joystick, btn)
 	if joystick:isGamepadDown("start") and brolaf.cur then
 		brolaf.cur.joystick = joystick
-		game = require("game")
 		gstate.switch(game)
 	end
 	if joystick:isGamepadDown("back") and brolaf.cur then

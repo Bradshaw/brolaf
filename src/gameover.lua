@@ -6,7 +6,7 @@ local CurrentTimer = 0
 local lastBlast = -1
 local shake = 0
 local shakeamt = 10
-
+local countToMenu = 5
 
 function state:init()
 end
@@ -15,7 +15,7 @@ end
 function state:enter( pre )
 	brolaf.new({noReplace = false})
 	CurrentTimer = 0
-
+	countToMenu = 5
 	lastBlast = -1
 	shake = 0
 	shakeamt = 10
@@ -27,6 +27,10 @@ end
 
 
 function state:update(dt)
+	countToMenu = countToMenu - dt
+	if countToMenu<0 then
+		gstate.switch(menu)
+	end
 	shake = shake - shake * dt*3
 	if math.floor(CurrentTimer)>lastBlast and CurrentTimer<=GameOverTexture.startTime+1 then
 		lastBlast = CurrentTimer
@@ -78,12 +82,7 @@ end
 
 function state:keypressed(key, isRepeat)
 	if key=='escape' then
-		menu = require("menu")
 		gstate.switch(menu)
-	end
-	if key=='return' or key==' ' then
-		game = require("game")
-		gstate.switch(game)
 	end
 end
 
@@ -130,11 +129,10 @@ end
 
 function state:gamepadpressed(joystick, btn)
 	if joystick:isGamepadDown("start") then
-		game = require("game")
+		brolaf.cur.joystick = joystick
 		gstate.switch(game)
 	end
 	if joystick:isGamepadDown("back") then
-		menu = require("menu")
 		gstate.switch(menu)
 	end
 end
